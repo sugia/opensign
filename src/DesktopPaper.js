@@ -14,6 +14,7 @@ import {
     Progress,
     Segmented,
     Modal,
+    Upload,
 } from 'antd'
 
 import {
@@ -24,6 +25,7 @@ import {
     EditOutlined,
     HomeOutlined,
     DeleteOutlined,
+    UploadOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -51,6 +53,8 @@ import SignatureCanvas from 'react-signature-canvas'
 import {
     Rnd,
 } from 'react-rnd'
+
+import * as PDFJS from 'pdfjs-dist/webpack'
 
 function DraggableImage(props) {
     const [content, setContent] = useState(props.content || '')
@@ -221,6 +225,7 @@ function DraggableText(props) {
         </Draggable>
     )
 }
+
 function DesktopPaper() {
     const {state, dispatch} = useContext(Context)
     const navigate = useNavigate()
@@ -229,21 +234,17 @@ function DesktopPaper() {
     const { paperName, paperPage } = useParams() // only activated once
 
     const [imagePageNumber, setImagePageNumber] = useState(parseInt(paperPage) || 1)
-    const imagePageNumberStart = 1
-    const imagePageNumberEnd = 16
+    const [imagePageNumberStart, setImagePageNumberStart] = useState(1)
+    const [imagePageNumberEnd, setImagePageNumberEnd] = useState(1)
 
-    const imageURL = useMemo(() => {
-        return `https://amplimap.com/images/${paperName}/${imagePageNumber}.jpg`
-    }, [imagePageNumber])
+
 
     useEffect(() => {
         const paperPageNumber = parseInt(paperPage)
         if (imagePageNumberStart > paperPageNumber) {
-            navigate(`/paper/${paperName}/${imagePageNumberStart}`)
             setImagePageNumber(1)
         }
         if (paperPageNumber > imagePageNumberEnd) {
-            navigate(`/paper/${paperName}/${imagePageNumberStart}`)
             setImagePageNumber(1)
         }
     }, [paperPage])
@@ -309,7 +310,6 @@ function DesktopPaper() {
                         setProgressPercent(Math.round(100 * imagePageNumber / imagePageNumberEnd))
 
                         pdf.addPage()
-                        navigate(`/paper/RPA/${imagePageNumber + 1}`)
                         setImagePageNumber(imagePageNumber + 1)
                     } else {
                         setProgressPercent(100)
@@ -332,7 +332,6 @@ function DesktopPaper() {
         setPdf(new jsPDF('p', 'mm', 'a4'))
         
         setIsPrintingPage(true)
-        navigate(`/paper/RPA/${imagePageNumberStart}`)
         setImagePageNumber(imagePageNumberStart)
         
         setProgressPercent(0)
@@ -342,9 +341,73 @@ function DesktopPaper() {
 
     const [segmentedValue, setSegmentedValue] = useState('Text Box')
     const [isSignatureModalVisible, setIsSignatureModalVisible] = useState(false)
-    const [signature, setSignature] = useState()
-    const [printedName, setPrintedName] = useState('')
-    const [nameInitials, setNameInitials] = useState('')
+    const [signature, setSignature] = useState(localStorage.getItem('signature') || '')
+    const [printedName, setPrintedName] = useState(localStorage.getItem('printedName') || '')
+    const [nameInitials, setNameInitials] = useState(localStorage.getItem('nameInitials') || '')
+
+    const [PDFImages, setPDFImages] = useState(JSON.parse(localStorage.getItem('PDFImages')) || [])
+
+    useEffect(() => {
+        if (signatureRef.current) {
+            const tmp = localStorage.getItem('signature')
+
+            signatureRef.current.fromDataURL(tmp, { width: 500, height: 200 })
+            setRerenderListCompletely(false)
+        }
+    }, [signatureRef.current, isSignatureModalVisible])
+
+
+    const readFileData = (file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            resolve(e.target.result);
+          };
+          reader.onerror = (err) => {
+            reject(err);
+          };
+          reader.readAsDataURL(file);
+        });
+      };
+      
+      //param: file -> the input file (e.g. event.target.files[0])
+      //return: images -> an array of images encoded in base64 
+      const convertPdfToImages = async (file) => {
+
+        const images = [];
+        const data = await readFileData(file);
+        const pdf = await PDFJS.getDocument(data).promise;
+        const canvas = document.createElement("canvas");
+        for (let i = 0; i < pdf.numPages; i++) {
+          const page = await pdf.getPage(i + 1);
+          const viewport = page.getViewport({ scale: 2 });
+          const context = canvas.getContext("2d");
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          await page.render({ canvasContext: context, viewport: viewport }).promise;
+          images.push(canvas.toDataURL());
+        }
+        canvas.remove();
+
+        // console.log(images)
+        setImagePageNumber(1)
+        setImagePageNumberEnd(images.length)
+        // localStorage.setItem('PDFImages', JSON.stringify(images))
+        return images;
+      }
+
+    const openPDF = (file) => {
+        // console.log(file)
+        convertPdfToImages(file)
+            .then((images) => {
+                setPDFImages(images)
+                setRerenderListCompletely(false)
+            })
+    }
+
+    const imageURL = useMemo(() => {
+        return PDFImages[imagePageNumber - 1]
+    }, [imagePageNumber, rerenderListCompletely])
 
     return (
         <Layout style={{'minWidth': '1000px'}}>
@@ -364,6 +427,23 @@ function DesktopPaper() {
                                 </Row>
                             </Col>
 
+                            <Col>
+                                <Upload showUploadList={false} onChange={(info) => {
+                                    openPDF(info.file.originFileObj)
+                                }}>
+                                    <Button style={{'marginTop': '25px'}}
+                                        disabled={progressPercent !== -1}
+                                        onClick={() => {
+                                        }}
+                                        icon={
+                                            <UploadOutlined />
+                                        }
+                                    >
+                                        Open PDF
+                                    </Button>
+                                </Upload>
+                            </Col>
+                            
                             <Col>
                                 <Popover content={<Typography>Ctrl + Click on the PDF file below to add a new item</Typography>}>
                                     <Button style={{'cursor': 'default'}} 
@@ -428,7 +508,9 @@ function DesktopPaper() {
                                     <SignatureCanvas ref={signatureRef} penColor='blue' canvasProps={{width: 500, height: 200}}     
 
                                         onEnd={() => {
-                                            setSignature(signatureRef.current.getTrimmedCanvas().toDataURL('image/png'))
+                                            const tmp = signatureRef.current.getCanvas().toDataURL('image/png')
+                                            setSignature(tmp)
+                                            localStorage.setItem('signature', tmp)
                                         }}
                                     />
                                 </Row>
@@ -436,6 +518,7 @@ function DesktopPaper() {
                                 <Row justify='end' style={{'margin': '10px 0px'}}>
                                     <Button onClick={() => {
                                             signatureRef?.current?.clear()
+                                            localStorage.removeItem('signature')
                                         }}
                                         icon={<DeleteOutlined />}
                                     >
@@ -444,8 +527,9 @@ function DesktopPaper() {
                                 </Row>
 
                                 <Row justify='start' style={{'margin': '10px 0px'}}>
-                                    <Input placeholder='Printed Name' onChange={(e) => {
+                                    <Input placeholder='Printed Name' value={printedName} onChange={(e) => {
                                             setPrintedName(e.target.value)
+                                            localStorage.setItem('printedName', e.target.value)
                                         }}
                                         //allowClear={true}
                                         //onClear={() => {
@@ -455,8 +539,9 @@ function DesktopPaper() {
                                 </Row>
                                 
                                 <Row justify='start' style={{'margin': '10px 0px'}}>
-                                    <Input placeholder='Name Initials' onChange={(e) => {
+                                    <Input placeholder='Name Initials' value={nameInitials} onChange={(e) => {
                                             setNameInitials(e.target.value)
+                                            localStorage.setItem('nameInitials', e.target.value)
                                         }}
                                         //allowClear={true}
                                         //onClear={() => {
@@ -640,13 +725,13 @@ function DesktopPaper() {
                     </Col>
                 </Row>
 
+                { PDFImages.length > 0 &&
                 <Row justify='center' align='middle' style={{'width': '100%'}} >
                     <Space.Compact>
 
                         <Button shape='circle' icon={<LeftOutlined />} disabled={imagePageNumber === imagePageNumberStart} onClick={() => {
                             const newImagePageNumber = imagePageNumber - 1
                             setImagePageNumber(newImagePageNumber)
-                            navigate(`/paper/${paperName}/${newImagePageNumber}`)
 
                         }}></Button>
  
@@ -659,7 +744,6 @@ function DesktopPaper() {
                         <Button shape='circle' icon={<RightOutlined />} disabled={imagePageNumber === imagePageNumberEnd} onClick={() => {
                             const newImagePageNumber = imagePageNumber + 1
                             setImagePageNumber(newImagePageNumber)
-                            navigate(`/paper/${paperName}/${newImagePageNumber}`)
 
                         }}></Button>
    
@@ -667,6 +751,7 @@ function DesktopPaper() {
 
                     
                 </Row>
+                }
 
 
 
