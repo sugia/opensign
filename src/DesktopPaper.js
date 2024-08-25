@@ -26,6 +26,8 @@ import {
     HomeOutlined,
     DeleteOutlined,
     UploadOutlined,
+    BulbOutlined,
+    AlertOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -231,23 +233,12 @@ function DesktopPaper() {
     const navigate = useNavigate()
 
 
-    const { paperName, paperPage } = useParams() // only activated once
-
-    const [imagePageNumber, setImagePageNumber] = useState(parseInt(paperPage) || 1)
+    const [paperName, setPaperName] = useState('')
+    const [imagePageNumber, setImagePageNumber] = useState(1)
     const [imagePageNumberStart, setImagePageNumberStart] = useState(1)
     const [imagePageNumberEnd, setImagePageNumberEnd] = useState(1)
 
 
-
-    useEffect(() => {
-        const paperPageNumber = parseInt(paperPage)
-        if (imagePageNumberStart > paperPageNumber) {
-            setImagePageNumber(1)
-        }
-        if (paperPageNumber > imagePageNumberEnd) {
-            setImagePageNumber(1)
-        }
-    }, [paperPage])
 
     const cookieKey = useMemo(() => {
         return `draggableComponentList_${paperName}_${imagePageNumber}`
@@ -340,21 +331,27 @@ function DesktopPaper() {
     }
 
     const [segmentedValue, setSegmentedValue] = useState('Text Box')
-    const [isSignatureModalVisible, setIsSignatureModalVisible] = useState(false)
     const [signature, setSignature] = useState(localStorage.getItem('signature') || '')
     const [printedName, setPrintedName] = useState(localStorage.getItem('printedName') || '')
     const [nameInitials, setNameInitials] = useState(localStorage.getItem('nameInitials') || '')
 
     const [PDFImages, setPDFImages] = useState(JSON.parse(localStorage.getItem('PDFImages')) || [])
 
+    const signatureCanvasWidth = 500
+    const signatureCanvasHeight = 200
+
+    const [signatureWidth, setSignatureWidth] = useState(localStorage.getItem('signatureWidth') || signatureCanvasWidth)
+    const [signatureHeight, setSignatureHeight] = useState(localStorage.getItem('signatureHeight') || signatureCanvasHeight)
+    
+
     useEffect(() => {
         if (signatureRef.current) {
             const tmp = localStorage.getItem('signature')
 
-            signatureRef.current.fromDataURL(tmp, { width: 500, height: 200 })
+            signatureRef.current.fromDataURL(tmp, { width: signatureCanvasWidth, height: signatureCanvasHeight })
             setRerenderListCompletely(false)
         }
-    }, [signatureRef.current, isSignatureModalVisible])
+    }, [signatureRef.current])
 
 
     const readFileData = (file) => {
@@ -372,7 +369,7 @@ function DesktopPaper() {
       
       //param: file -> the input file (e.g. event.target.files[0])
       //return: images -> an array of images encoded in base64 
-      const convertPdfToImages = async (file) => {
+    const convertPdfToImages = async (file) => {
 
         const images = [];
         const data = await readFileData(file);
@@ -394,7 +391,7 @@ function DesktopPaper() {
         setImagePageNumberEnd(images.length)
         // localStorage.setItem('PDFImages', JSON.stringify(images))
         return images;
-      }
+    }
 
     const openPDF = (file) => {
         // console.log(file)
@@ -402,6 +399,7 @@ function DesktopPaper() {
             .then((images) => {
                 setPDFImages(images)
                 setRerenderListCompletely(false)
+                setPaperName(file.name)
             })
     }
 
@@ -409,6 +407,20 @@ function DesktopPaper() {
         return PDFImages[imagePageNumber - 1]
     }, [imagePageNumber, rerenderListCompletely])
 
+
+    const segmentedOptions = useMemo(() => {
+        const res = ['Text Box']
+        if (signature) {
+            res.push('Signature')
+        }
+        if (printedName) {
+            res.push('Printed Name')
+        }
+        if (nameInitials) {
+            res.push('Name Initials')
+        }
+        return res
+    }, [signature, printedName, nameInitials])
     return (
         <Layout style={{'minWidth': '1000px'}}>
 
@@ -416,7 +428,7 @@ function DesktopPaper() {
                 <Layout.Header style={{'background': 'white', 'height': '70px'}}>
                     <Row justify='center' align='top' style={{'backgroundColor': 'white', 'height': '100%'}}>
                         <Row justify='space-between' align='top' style={{'maxWidth': '2000px', 'width': '100%', 'height': '100%', 'backgroundColor': 'white'}}>
-                            <Col style={{'cursor': 'pointer'}} onClick={() => { window.scrollTo(0, 0)}}>
+                            <Col span={4} style={{'cursor': 'pointer'}} onClick={() => { window.scrollTo(0, 0)}}>
                                 <Row justify='center' align='bottom'>
                                     <Col>
                                         <Image height={30} preview={false} src={state.appLogo}></Image>
@@ -427,7 +439,7 @@ function DesktopPaper() {
                                 </Row>
                             </Col>
 
-                            <Col>
+                            <Col span={4}>
                                 <Upload showUploadList={false} onChange={(info) => {
                                     openPDF(info.file.originFileObj)
                                 }}>
@@ -444,7 +456,7 @@ function DesktopPaper() {
                                 </Upload>
                             </Col>
                             
-                            <Col>
+                            <Col span={12} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
                                 <Popover content={<Typography>Ctrl + Click on the PDF file below to add a new item</Typography>}>
                                     <Button style={{'cursor': 'default'}} 
                                         type='text' 
@@ -454,104 +466,90 @@ function DesktopPaper() {
 
                                 <Segmented
                                     style={{'marginTop': '25px'}}
-                                    options={['Text Box', 'Signature', 'Printed Name', 'Name Initials']}
+                                    options={segmentedOptions}
                                     value={segmentedValue}
                                     onChange={(value) => {
                                         setSegmentedValue(value)
-
-                                        if (value === 'Signature' && !signature) {
-                                            setIsSignatureModalVisible(true)
-                                        } else if (value === 'Printed Name' && !printedName) {
-                                            setIsSignatureModalVisible(true)
-                                        } else if (value === 'Name Initials' && !nameInitials) {
-                                            setIsSignatureModalVisible(true)
-                                        }
                                     }}
                                 />
                                 
-                                <Popover content={<Typography>Edit Signature</Typography>}>
+                                <Popover trigger='click' placement='bottomLeft' content={
+                                    <>
+                                    <Row justify='space-between' align='middle'>
+                                        <Col>
+                                            <Typography>
+                                                Signature
+                                            </Typography>
+                                        </Col>
+                                        <Col>
+                                            <Button type='text' onClick={() => {
+                                                    signatureRef?.current?.clear()
+                                                    localStorage.removeItem('signature')
+                                                    setSignature('')
+                                                }}
+                                                icon={<DeleteOutlined />}
+                                            >
+                                            Clear Signature
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                    <Row justify='center' 
+                                        style={{'borderRadius': '16px', 'boxShadow': "5px 8px 24px 5px rgba(208, 216, 243, 0.4)",
+                                            'margin': '10px 0px'
+                                        }}>
+                                        <SignatureCanvas ref={signatureRef} penColor='blue' canvasProps={{
+                                            width: signatureCanvasWidth, height: signatureCanvasHeight}}     
+
+                                            onEnd={() => {
+                                                const tmp = signatureRef.current.getCanvas().toDataURL('image/png')
+                                                setSignature(tmp)
+                                                localStorage.setItem('signature', tmp)
+                                            }}
+                                        />
+                                    </Row>
+                                    
+
+                                    <Row justify='start' style={{'margin': '10px 0px'}}>
+
+                                        <Input addonBefore={
+                                            <Row style={{'width': '100px'}}>
+                                                <Typography>Printed Name:</Typography>
+                                            </Row>
+                                        }  value={printedName} placeholder='Open Sign' onChange={(e) => {
+                                                setPrintedName(e.target.value)
+                                                localStorage.setItem('printedName', e.target.value)
+                                            }}
+                                            
+                                        />
+
+                                    </Row>
+                                    
+                                    <Row justify='start' style={{'margin': '10px 0px'}}>
+                                        <Input addonBefore={
+                                            <Row style={{'width': '100px'}}>
+                                                <Typography>Name Initials:</Typography>
+                                            </Row>
+                                        }  value={nameInitials} placeholder='OS' onChange={(e) => {
+                                                setNameInitials(e.target.value)
+                                                localStorage.setItem('nameInitials', e.target.value)
+                                            }}
+                                            
+                                        />
+                                    </Row>
+
+
+                                    </>
+                                }>
+                                
+                                
                                     <Button type='text' icon={<EditOutlined style={{'color': 'gray'}} />} onClick={() => {
-                                        setIsSignatureModalVisible(true)
                                     }}>
                                     </Button>
+                                
                                 </Popover>
                             </Col>
 
-                            <Modal title='Signatures' open={isSignatureModalVisible} 
-                                footer={<Button onClick={() => {
-                                    setIsSignatureModalVisible(false)
-
-                                    if (segmentedValue === 'Signature' && !signature) {
-                                        setSegmentedValue('Text Box')
-                                    } else if (segmentedValue === 'Printed Name' && !printedName) {
-                                        setSegmentedValue('Text Box')
-                                    } else if (segmentedValue === 'Name Initials' && !nameInitials) {
-                                        setSegmentedValue('Text Box')
-                                    }
-                                }}>OK</Button>}
-                                closable={true}
-                                closeIcon={<CloseOutlined onClick={() => {
-                                    setIsSignatureModalVisible(false)
-
-                                    if (segmentedValue === 'Signature' && !signature) {
-                                        setSegmentedValue('Text Box')
-                                    } else if (segmentedValue === 'Printed Name' && !printedName) {
-                                        setSegmentedValue('Text Box')
-                                    } else if (segmentedValue === 'Name Initials' && !nameInitials) {
-                                        setSegmentedValue('Text Box')
-                                    }
-                                }} />}
-                                maskClosable={false}
-                            >
-                                <Row justify='center' 
-                                        style={{'borderRadius': '16px', 'boxShadow': "5px 8px 24px 5px rgba(208, 216, 243, 0.6)"}}>
-                                    <SignatureCanvas ref={signatureRef} penColor='blue' canvasProps={{width: 500, height: 200}}     
-
-                                        onEnd={() => {
-                                            const tmp = signatureRef.current.getCanvas().toDataURL('image/png')
-                                            setSignature(tmp)
-                                            localStorage.setItem('signature', tmp)
-                                        }}
-                                    />
-                                </Row>
-                                
-                                <Row justify='end' style={{'margin': '10px 0px'}}>
-                                    <Button onClick={() => {
-                                            signatureRef?.current?.clear()
-                                            localStorage.removeItem('signature')
-                                        }}
-                                        icon={<DeleteOutlined />}
-                                    >
-                                    Clear Signature
-                                    </Button>
-                                </Row>
-
-                                <Row justify='start' style={{'margin': '10px 0px'}}>
-                                    <Input placeholder='Printed Name' value={printedName} onChange={(e) => {
-                                            setPrintedName(e.target.value)
-                                            localStorage.setItem('printedName', e.target.value)
-                                        }}
-                                        //allowClear={true}
-                                        //onClear={() => {
-                                        //    setPrintedName('')
-                                        //}}
-                                    />
-                                </Row>
-                                
-                                <Row justify='start' style={{'margin': '10px 0px'}}>
-                                    <Input placeholder='Name Initials' value={nameInitials} onChange={(e) => {
-                                            setNameInitials(e.target.value)
-                                            localStorage.setItem('nameInitials', e.target.value)
-                                        }}
-                                        //allowClear={true}
-                                        //onClear={() => {
-                                        //    setNameInitials('')
-                                        //}}
-                                    />
-                                </Row>
-                            </Modal>
-
-                            <Col>
+                            <Col span={4} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
                                 <Button style={{'marginTop': '25px'}}
                                     disabled={progressPercent !== -1}
                                     onClick={() => {
@@ -615,6 +613,11 @@ function DesktopPaper() {
 
                                                         setDraggableComponentList(newList)
                                                         localStorage.setItem([cookieKey], JSON.stringify(newList))
+
+                                                        setSignatureWidth(width)
+                                                        setSignatureHeight(height)
+                                                        localStorage.setItem('signatureWidth', width)
+                                                        localStorage.setItem('signatureHeight', height)
                                                     }}
                                                     deleteItem={() => {
                                                         const newList = [
@@ -683,8 +686,8 @@ function DesktopPaper() {
                                                 'content': signature,
                                                 'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
                                                 'y': e.clientY - 80, // header height
-                                                'width': 500,
-                                                'height': 200,
+                                                'width': signatureWidth,
+                                                'height': signatureHeight,
                                             }
                                             : segmentedValue === 'Printed Name'?
                                             {
@@ -716,7 +719,6 @@ function DesktopPaper() {
                                         // console.log(signature)
                                         setDraggableComponentList(newList)
                                         localStorage.setItem([cookieKey], JSON.stringify(newList))
-
 
                                     }
                                 }}
