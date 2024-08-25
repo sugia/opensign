@@ -106,21 +106,21 @@ function Desktop() {
                             </Typography>
                         </Row>
                         <Row justify='start' align='middle'>
-                        <a href={state.appURL + '/policy/cookies'} target='_blank' rel="noopener noreferrer">
+                        <a href={'https://jomimi.com/policy/cookies'} target='_blank' rel="noopener noreferrer">
                             <Typography.Title level={5}>
                                 Cookies Policy
                             </Typography.Title>
                         </a>
                         </Row>
                         <Row justify='start' align='middle'>
-                        <a href={state.appURL + '/policy/privacy'} target='_blank' rel="noopener noreferrer">
+                        <a href={'https://jomimi.com/policy/privacy'} target='_blank' rel="noopener noreferrer">
                             <Typography.Title  level={5}>
                                 Privacy Policy
                             </Typography.Title>
                         </a>
                         </Row>
                         <Row justify='start' align='middle'>
-                        <a href={state.appURL + '/policy/terms'} target='_blank' rel="noopener noreferrer">
+                        <a href={'https://jomimi.com/policy/terms'} target='_blank' rel="noopener noreferrer">
                             <Typography.Title level={5}>
                                 Terms of Service
                             </Typography.Title>

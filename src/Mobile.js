@@ -109,21 +109,21 @@ function Mobile() {
                                 </Typography>
                             </Row>
                             <Row justify='start' align='middle' style={{'marginTop': '20px'}}>
-                            <a href={state.appURL + '/policy/cookies'} target='_blank' rel="noopener noreferrer">
+                            <a href={'https://jomimi.com/policy/cookies'} target='_blank' rel="noopener noreferrer">
                                 <Typography.Title level={5} style={{'margin': '0px'}}>
                                     Cookies Policy
                                 </Typography.Title>
                             </a>
                             </Row>
                             <Row justify='start' align='middle' style={{'marginTop': '20px'}}>
-                            <a href={state.appURL + '/policy/privacy'} target='_blank' rel="noopener noreferrer">
+                            <a href={'https://jomimi.com/policy/privacy'} target='_blank' rel="noopener noreferrer">
                                 <Typography.Title level={5} style={{'margin': '0px'}}>
                                     Privacy Policy
                                 </Typography.Title>
                             </a>
                             </Row>
                             <Row justify='start' align='middle' style={{'marginTop': '20px'}}>
-                            <a href={state.appURL + '/policy/terms'} target='_blank' rel="noopener noreferrer">
+                            <a href={'https://jomimi.com/policy/terms'} target='_blank' rel="noopener noreferrer">
                                 <Typography.Title level={5} style={{'margin': '0px'}}>
                                     Terms of Service
                                 </Typography.Title>
