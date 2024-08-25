@@ -4,5 +4,18 @@ OpenSign is a powerful, open-source platform that delivers a seamless and secure
 ## Live Demo
 https://opensign.jomimi.com
 
+
+
+## Getting Started
+```
+git clone https://github.com/sugia/opensign.git
+
+cd opensign
+
+npm i
+
+npm run start
+```
+
 ## License
 This codebase is licensed under [Apache License 2.0](https://github.com/sugia/React-Landing-Page-Template/blob/main/LICENSE). For more information, see the LICENSE file in this repository.
