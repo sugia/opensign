@@ -1,10 +1,10 @@
 import React from 'react'
 
-import realkit_logo from '../images/realkit_logo.webp'
-import realkit_banner from '../images/realkit_banner.png'
-
 import discordImage from '../images/discord.webp'
 import emailImage from '../images/email_256.webp'
+
+import opensign_logo from '../images/opensign_logo_512.png'
+import opensign_banner from '../images/digital_signature.jpg'
 
 export const initialState = {
     // when in dev, change appURL to local url
@@ -14,11 +14,11 @@ export const initialState = {
 
     appURL: process.env.REACT_APP_URI,
 
-    appLogo: realkit_logo,
+    appLogo: opensign_logo,
     appName: 'OpenSign',
     coverTitle: 'The Open-Source Solution for Digital Signatures',
     coverText: 'OpenSign is a powerful, open-source platform that delivers a seamless and secure solution for digital signatures. Built to give businesses, organizations, and individuals complete control over their document signing processes, OpenSign offers customizable workflows, robust data privacy, and easy integration with your existing systems—all at no cost. Empower your digital document management with OpenSign, and join the open-source movement today.',
-    coverImage: realkit_banner,
+    coverImage: opensign_banner,
 
     discordImage: discordImage,
     discordLink: 'https://discord.gg/AwRv3QZuKP',

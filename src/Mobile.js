@@ -51,53 +51,9 @@ function Mobile() {
                         </Typography>
                     </Row>
 
-                    <Row justify='space-around'>
-                        {
-                            state.appleStoreLink &&
-                            <Col style={{'width': '45%'}}>
-                                <Row justify='center'>
-                                <a href={state.appleStoreLink} target='_blank' rel="noopener noreferrer">
-                                    <Image height={50} preview={false} src={state.appleStoreBadge}></Image>
-                                </a>
-                                </Row>
-                            </Col>
-                        }
-                        {
-                            state.googlePlayLink &&
-                            <Col style={{'width': '45%'}}>
-                                <Row justify='center'>
-                                <a href={state.googlePlayLink} target='_blank' rel="noopener noreferrer">
-                                    <Image height={50} style={{'padding': '2px 0'}} preview={false} src={state.googlePlayBadge}></Image>
-                                </a>
-                                </Row>
-                            </Col>
-                        }
-                        {
-                            state.launched &&   
-                            <Button type='primary' size='large' shape='round'
-                                style={{'margin': '20px 5px', 'backgroundColor': 'limegreen'}} onClick={() => {
-                                window.open(state.appURL + '/buyer', '_self')
-                            }}>
-                                <Typography.Title level={5} style={{'color': 'white', 'marginTop': '7px'}}>
-                                    I'm a buyer
-                                </Typography.Title>
-                            </Button> 
-                        }
 
-                        {
-                            state.launched &&   
-                            <Button type='primary' size='large' shape='round' disabled={true}
-                                style={{'margin': '20px 5px'}} onClick={() => {
-                                window.open(state.appURL + '/seller', '_self')
-                            }}>
-                                <Typography.Title level={5} style={{'color': 'gray', 'marginTop': '7px'}}>
-                                    I'm a seller (coming soon)
-                                </Typography.Title>
-                            </Button> 
-                        }
-                    </Row>
 
-                    <Row justify='center'>
+                    <Row justify='center' style={{'marginTop': '20px'}}>
                         <Image preview={false} src={state.coverImage} style={{'width': '100vw'}}></Image>
                     </Row>
                 </Row>

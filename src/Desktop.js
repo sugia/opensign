@@ -54,47 +54,15 @@ function Desktop() {
                         </Row>
 
                         <Row justify='center' style={{'marginTop': '50px'}}>
-                            {
-                                state.appleStoreLink &&
-                                <Col style={{'width': '200px'}}>
-                                    <Row justify='center'>
-                                    <a href={state.appleStoreLink} target='_blank' rel="noopener noreferrer">
-                                        <Image height={50} preview={false} src={state.appleStoreBadge}></Image>
-                                    </a>
-                                    </Row>
-                                </Col>
-                            }
-                            {
-                                state.googlePlayLink &&
-                                <Col style={{'width': '150px'}}>
-                                    <Row justify='center'>
-                                    <a href={state.googlePlayLink} target='_blank' rel="noopener noreferrer">
-                                        <Image height={50} preview={false} src={state.googlePlayBadge}></Image>
-                                    </a>
-                                    </Row>
-                                </Col>
-                            }   
-                            { state.launched &&
-                                <Button type='primary' size='large' shape='round' 
-                                    style={{'margin': '0px 5px', 'backgroundColor': 'limegreen'}} 
-                                    onClick={() => {
-                                        window.open(state.appURL + '/buyer', '_self')
-                                }}>
-                                    <Typography.Title level={5} style={{'color': 'white', 'marginTop': '7px'}}>
-                                        I'm a buyer
-                                    </Typography.Title>
-                                </Button>
-                            } 
-                            { state.launched &&
-                                <Button type='primary' size='large' shape='round' disabled={true} 
-                                    style={{'margin': '0px 5px'}} onClick={() => {
-                                    window.open(state.appURL + '/seller', '_self')
-                                }}>
-                                    <Typography.Title level={5} style={{'color': 'gray', 'marginTop': '7px'}}>
-                                        I'm a seller (coming soon)
-                                    </Typography.Title>
-                                </Button>
-                            }                   
+                            <Button type='primary' size='large' shape='round' 
+                                style={{'margin': '0px 5px'}} 
+                                onClick={() => {
+                                    window.open(state.appURL + '/paper', '_self')
+                            }}>
+                                <Typography.Title level={5} style={{'color': 'white', 'marginTop': '7px'}}>
+                                    Get Started
+                                </Typography.Title>
+                            </Button>                
                         </Row>
                     </Col>
 
@@ -106,46 +74,6 @@ function Desktop() {
                 </Row>
                 </Row>
 
-
-                {/* endorsement list 
-                <Row justify='center' align='middle' style={{'height': '700px', 'padding': '100px'}}>
-                <Row justify='center' align='middle' style={{'maxWidth': '2000px'}}>
-                
-                    <motion.div 
-                            initial={{y: 300, opacity: 0}} 
-                            whileInView={{y: 0, opacity: 1, transition: {type: 'spring', bounce: 0, duration: 1}}} 
-                            viewport={{once: true}}>
-                        <Row justify='center'>
-                            <Typography.Title>
-                                {state.endorsementTitle}
-                            </Typography.Title>
-                        </Row>
-                        <Row justify='center'>
-                            <Typography style={{'fontSize': '16px'}}>
-                                {state.endorsementText}
-                            </Typography>
-                        </Row>
-
-                        <Row justify='center' style={{'marginTop': '50px'}}>
-                            {
-                                state.endorsementList.map((endorsementItem, index) => {
-                                    return (
-                                        <Col span={3}>
-                                            <Tooltip placement='top' title={endorsementItem.title} color={endorsementItem.titleColor}>
-                                            <a href={endorsementItem.URL} target='_blank' rel="noopener noreferrer">
-                                                <Image height={70} preview={false} src={endorsementItem.image} style={{'boxShadow': '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)'}}></Image>
-                                            </a>
-                                            </Tooltip>
-                                        </Col>
-                                    )
-                                })
-                            }
-                        </Row>
-                    </motion.div>
-                    
-                </Row>
-                </Row>
-                */}
 
 
                 {/* policies */}

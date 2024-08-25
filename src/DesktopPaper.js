@@ -439,7 +439,7 @@ function DesktopPaper() {
                                 </Row>
                             </Col>
 
-                            <Col span={4}>
+                            <Col offset={2} span={4}>
                                 <Upload showUploadList={false} onChange={(info) => {
                                     openPDF(info.file.originFileObj)
                                 }}>
@@ -456,7 +456,7 @@ function DesktopPaper() {
                                 </Upload>
                             </Col>
                             
-                            <Col span={12} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
+                            <Col span={10} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
                                 <Popover content={<Typography>Ctrl + Click on the PDF file below to add a new item</Typography>}>
                                     <Button style={{'cursor': 'default'}} 
                                         type='text' 
