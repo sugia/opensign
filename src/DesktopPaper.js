@@ -48,20 +48,10 @@ import {
 import { Context } from './store/Context'
 
 import { useNavigate, useParams } from 'react-router-dom'
-import DesktopHeader from './DesktopHeader'
-
-import Draggable from 'react-draggable'
-
 
 import html2canvas from 'html2canvas'
 
 import jsPDF from 'jspdf'
-
-import SignatureCanvas from 'react-signature-canvas'
-
-import {
-    Rnd,
-} from 'react-rnd'
 
 import * as PDFJS from 'pdfjs-dist/webpack'
 
@@ -74,15 +64,18 @@ function DesktopPaper() {
     const {state, dispatch} = useContext(Context)
     const navigate = useNavigate()
 
+    const [PDFImages, setPDFImages] = useState(JSON.parse(localStorage.getItem('PDFImages')) || [])
+
 
     const [paperName, setPaperName] = useState('')
     const [imagePageNumber, setImagePageNumber] = useState(1)
-    const [imagePageNumberStart, setImagePageNumberStart] = useState(1)
-    const [imagePageNumberEnd, setImagePageNumberEnd] = useState(1)
 
-
-
-    const cookieKey = useMemo(() => {
+    const imagePageNumberStart = 1
+    const imagePageNumberEnd = useMemo(() => {
+        return PDFImages.length
+    }, [PDFImages.length])
+    
+    const localStorageKey = useMemo(() => {
         return `draggableComponentList_${paperName}_${imagePageNumber}`
     }, [paperName, imagePageNumber])
 
@@ -91,12 +84,9 @@ function DesktopPaper() {
     const [rerenderListCompletely, setRerenderListCompletely] = useState(true)
     
     useEffect(() => {
-        // console.log(localStorage.getItem(cookieKey))
-        setDraggableComponentList(JSON.parse(localStorage.getItem(cookieKey))  || [])
+        setDraggableComponentList(JSON.parse(localStorage.getItem(localStorageKey))  || [])
         setRerenderListCompletely(false)
-
-        // console.log(getCookie(cookieKey))
-    }, [cookieKey])
+    }, [localStorageKey])
 
     useEffect(() => {
         if (!rerenderListCompletely) {
@@ -129,7 +119,6 @@ function DesktopPaper() {
         // todo: hack to render background image and cookie addon elements
         sleep(400).then(() => {
             const element = printRef.current
-            // const element = document.getElementById('printRef')
             html2canvas(element, {useCORS: true, allowTaint: true, logging: false})
                 .then((canvas) => {
                     const imgData = canvas.toDataURL('image/png');
@@ -147,7 +136,7 @@ function DesktopPaper() {
                     } else {
                         setProgressPercent(100)
 
-                        pdf.save('download.pdf');
+                        pdf.save(`${paperName}_OpenSign.pdf`);
                         setIsPrintingPage(false)
 
                         setTimeout(() => {
@@ -169,21 +158,14 @@ function DesktopPaper() {
         
         setProgressPercent(0)
         
-        
     }
 
     const [segmentedValue, setSegmentedValue] = useState('Text Box')
-    const [signature, setSignature] = useState(localStorage.getItem('signature') || '')
-    const [printedName, setPrintedName] = useState(localStorage.getItem('printedName') || '')
-    const [nameInitials, setNameInitials] = useState(localStorage.getItem('nameInitials') || '')
 
-    const [PDFImages, setPDFImages] = useState(JSON.parse(localStorage.getItem('PDFImages')) || [])
 
-    const signatureCanvasWidth = 500
-    const signatureCanvasHeight = 200
 
-    const [signatureWidth, setSignatureWidth] = useState(localStorage.getItem('signatureWidth') || signatureCanvasWidth)
-    const [signatureHeight, setSignatureHeight] = useState(localStorage.getItem('signatureHeight') || signatureCanvasHeight)
+    const [signatureWidth, setSignatureWidth] = useState(localStorage.getItem('signatureWidth') || state.signatureCanvasWidth)
+    const [signatureHeight, setSignatureHeight] = useState(localStorage.getItem('signatureHeight') || state.signatureCanvasHeight)
     
     const [isLoadingPDF, setIsLoadingPDF] = useState(false)
 
@@ -222,10 +204,9 @@ function DesktopPaper() {
         }
         canvas.remove();
 
-        // console.log(images)
+        
         setImagePageNumber(1)
-        setImagePageNumberEnd(images.length)
-        // localStorage.setItem('PDFImages', JSON.stringify(images))
+        
         setIsLoadingPDF(false)
         return images;
     }
@@ -238,7 +219,7 @@ function DesktopPaper() {
             .then((images) => {
                 setPDFImages(images)
                 setRerenderListCompletely(false)
-                setPaperName(file.name)
+                setPaperName(file.name.replace(/\.[^/.]+$/, ""))
             })
     }
 
@@ -249,20 +230,19 @@ function DesktopPaper() {
 
     const segmentedOptions = useMemo(() => {
         const res = ['Text Box']
-        if (signature) {
+        if (state.signature) {
             res.push('Signature')
         }
-        if (printedName) {
+        if (state.printedName) {
             res.push('Printed Name')
         }
-        if (nameInitials) {
+        if (state.nameInitials) {
             res.push('Name Initials')
         }
         return res
-    }, [signature, printedName, nameInitials, rerenderListCompletely])
+    }, [state.signature, state.printedName, state.nameInitials, rerenderListCompletely])
 
 
-    const [IsDrawingPadVisible, setIsDrawingPadVisible] = useState(false)
 
     return (
         <Layout style={{'minWidth': '1000px'}}>
@@ -423,7 +403,7 @@ function DesktopPaper() {
                                                         newList[idx]['y'] = y
                                                         
                                                         setDraggableComponentList(newList)
-                                                        localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                                        localStorage.setItem([localStorageKey], JSON.stringify(newList))
 
 
                                                     }}
@@ -433,7 +413,7 @@ function DesktopPaper() {
                                                         newList[idx]['height'] = height
 
                                                         setDraggableComponentList(newList)
-                                                        localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                                        localStorage.setItem([localStorageKey], JSON.stringify(newList))
 
                                                         setSignatureWidth(width)
                                                         setSignatureHeight(height)
@@ -446,7 +426,7 @@ function DesktopPaper() {
                                                             ...draggableComponentList.slice(idx+1),
                                                         ]
                                                         setDraggableComponentList(newList)
-                                                        localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                                        localStorage.setItem([localStorageKey], JSON.stringify(newList))
                                                         setRerenderListCompletely(false)
                                                         
                                                     }}
@@ -464,7 +444,7 @@ function DesktopPaper() {
                                                         newList[idx]['content'] = content
                                                         
                                                         setDraggableComponentList(newList)
-                                                        localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                                        localStorage.setItem([localStorageKey], JSON.stringify(newList))
 
 
                                                     }}
@@ -474,7 +454,7 @@ function DesktopPaper() {
                                                         newList[idx]['y'] = y
                                                         
                                                         setDraggableComponentList(newList)
-                                                        localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                                        localStorage.setItem([localStorageKey], JSON.stringify(newList))
 
 
                                                     }}
@@ -485,7 +465,7 @@ function DesktopPaper() {
                                                             ...draggableComponentList.slice(idx+1),
                                                         ]
                                                         setDraggableComponentList(newList)
-                                                        localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                                        localStorage.setItem([localStorageKey], JSON.stringify(newList))
                                                         setRerenderListCompletely(false)
                                                     }}
                                                 />
@@ -504,7 +484,7 @@ function DesktopPaper() {
                                             segmentedValue === 'Signature'?
                                             {
                                                 'type': 'image',
-                                                'content': signature,
+                                                'content': state.signature,
                                                 'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
                                                 'y': e.clientY - 80, // header height
                                                 'width': signatureWidth,
@@ -513,14 +493,14 @@ function DesktopPaper() {
                                             : segmentedValue === 'Printed Name'?
                                             {
                                                 'type': 'text',
-                                                'content': printedName,
+                                                'content': state.printedName,
                                                 'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
                                                 'y': e.clientY - 80, // header height
                                             }
                                             : segmentedValue === 'Name Initials'?
                                             {
                                                 'type': 'text',
-                                                'content': nameInitials,
+                                                'content': state.nameInitials,
                                                 'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
                                                 'y': e.clientY - 80, // header height
                                             }
@@ -539,7 +519,7 @@ function DesktopPaper() {
                                         
                                         // console.log(signature)
                                         setDraggableComponentList(newList)
-                                        localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                        localStorage.setItem([localStorageKey], JSON.stringify(newList))
 
                                     }
                                 }}

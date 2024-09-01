@@ -28,9 +28,9 @@ export const initialState = {
 
     signatureCanvasWidth: 500,
     signatureCanvasHeight: 200,
-    signature: '',
-    printedName: '',
-    nameNintials: '',
+    signature: localStorage.getItem('signature') || '',
+    printedName: localStorage.getItem('printedName') || '',
+    nameInitials: localStorage.getItem('nameInitials') || '',
 }
 
 
