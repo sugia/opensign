@@ -6,6 +6,7 @@ import Desktop from './Desktop'
 import Mobile from './Mobile'
 
 import DesktopPaper from './DesktopPaper'
+import MobilePaper from './MobilePaper'
 
 import {
   useReducer,
@@ -31,6 +32,7 @@ function RouteElementsDesktop() {
 function RouteElementsMobile() {
   const routeElements = useRoutes([
     { path: '/', element: <Mobile /> },
+    { path: '/paper', element: <MobilePaper /> },
   ]);
   return routeElements
 }

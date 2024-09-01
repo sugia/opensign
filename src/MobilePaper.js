@@ -47,10 +47,8 @@ import {
 import { Context } from './store/Context'
 
 import { useNavigate, useParams } from 'react-router-dom'
-import DesktopHeader from './DesktopHeader'
 
 import Draggable from 'react-draggable'
-
 
 import html2canvas from 'html2canvas'
 
@@ -234,7 +232,7 @@ function DraggableText(props) {
     )
 }
 
-function DesktopPaper() {
+function MobilePaper() {
     const {state, dispatch} = useContext(Context)
     const navigate = useNavigate()
 
@@ -247,7 +245,7 @@ function DesktopPaper() {
 
 
     const cookieKey = useMemo(() => {
-        return `draggableComponentList_${paperName}_${imagePageNumber}`
+        return `mobile_draggableComponentList_${paperName}_${imagePageNumber}`
     }, [paperName, imagePageNumber])
 
     const [draggableComponentList, setDraggableComponentList] = useState([])
@@ -276,7 +274,7 @@ function DesktopPaper() {
     // const signatureRef = useRef()
 
     const signatureRef = useCallback((node) => {
-        const tmp = localStorage.getItem('signature')
+        const tmp = localStorage.getItem('mobile_signature')
         node?.fromDataURL(tmp, { width: signatureCanvasWidth, height: signatureCanvasHeight })
         setRerenderListCompletely(false)
     }, [])
@@ -343,17 +341,17 @@ function DesktopPaper() {
     }
 
     const [segmentedValue, setSegmentedValue] = useState('Text Box')
-    const [signature, setSignature] = useState(localStorage.getItem('signature') || '')
-    const [printedName, setPrintedName] = useState(localStorage.getItem('printedName') || '')
-    const [nameInitials, setNameInitials] = useState(localStorage.getItem('nameInitials') || '')
+    const [signature, setSignature] = useState(localStorage.getItem('mobile_signature') || '')
+    const [printedName, setPrintedName] = useState(localStorage.getItem('mobile_printedName') || '')
+    const [nameInitials, setNameInitials] = useState(localStorage.getItem('mobile_nameInitials') || '')
 
-    const [PDFImages, setPDFImages] = useState(JSON.parse(localStorage.getItem('PDFImages')) || [])
+    const [PDFImages, setPDFImages] = useState(JSON.parse(localStorage.getItem('mobile_PDFImages')) || [])
 
     const signatureCanvasWidth = 500
     const signatureCanvasHeight = 200
 
-    const [signatureWidth, setSignatureWidth] = useState(localStorage.getItem('signatureWidth') || signatureCanvasWidth)
-    const [signatureHeight, setSignatureHeight] = useState(localStorage.getItem('signatureHeight') || signatureCanvasHeight)
+    const [signatureWidth, setSignatureWidth] = useState(localStorage.getItem('mobile_signatureWidth') || signatureCanvasWidth)
+    const [signatureHeight, setSignatureHeight] = useState(localStorage.getItem('mobile_signatureHeight') || signatureCanvasHeight)
     
     const [isLoadingPDF, setIsLoadingPDF] = useState(false)
 
@@ -395,7 +393,7 @@ function DesktopPaper() {
         // console.log(images)
         setImagePageNumber(1)
         setImagePageNumberEnd(images.length)
-        // localStorage.setItem('PDFImages', JSON.stringify(images))
+        
         setIsLoadingPDF(false)
         return images;
     }
@@ -431,34 +429,21 @@ function DesktopPaper() {
         return res
     }, [signature, printedName, nameInitials])
     return (
-        <Layout style={{'minWidth': '1000px'}}>
-
+        <Layout>
             <Affix offsetTop={0}>
-                <Layout.Header style={{'background': 'white', 'height': '70px'}}>
+                <Layout.Header style={{'background': 'white', 'height': '70px', 'padding': '0px'}}>
                     <Row justify='center' align='top' style={{'backgroundColor': 'white', 'height': '100%'}}>
-                        <Row justify='space-between' align='top' style={{'maxWidth': '2000px', 'width': '100%', 'height': '100%', 'backgroundColor': 'white'}}>
-                            <Col span={4} style={{'cursor': 'pointer'}} onClick={() => { window.scrollTo(0, 0)}}>
+                        <Row justify='space-between' align='top' style={{'width': '100%', 'height': '100%', 'backgroundColor': 'white'}}>
+                            <Col span={4}>
                                 <Row justify='center' align='bottom'>
                                     <Col>
                                         <Image height={30} preview={false} src={state.appLogo}></Image>
                                     </Col>
-                                    <Col>
-                                        <Typography.Title level={3} style={{'color': 'black', 'marginLeft': '10px'}}>{state.appName}</Typography.Title>
-                                    </Col>
                                 </Row>
                             </Col>
 
-                            <Col offset={2} span={4}>
-                                
-                            </Col>
                             
-                            <Col span={10} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
-                                <Popover content={<Typography>Ctrl + Click on the PDF file below to add a new item</Typography>}>
-                                    <Button style={{'cursor': 'default'}} 
-                                        type='text' 
-                                        icon={<HomeOutlined style={{'color': 'gray'}} />}>
-                                    </Button>
-                                </Popover>
+                            <Col span={14} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
 
                                 <Segmented
                                     style={{'marginTop': '25px'}}
@@ -480,7 +465,7 @@ function DesktopPaper() {
                                         <Col>
                                             <Button type='text' onClick={() => {
                                                     signatureRef?.current?.clear()
-                                                    localStorage.removeItem('signature')
+                                                    localStorage.removeItem('mobile_signature')
                                                     setSignature('')
                                                 }}
                                                 icon={<DeleteOutlined />}
@@ -499,7 +484,7 @@ function DesktopPaper() {
                                             onEnd={() => {
                                                 const tmp = signatureRef.current.getCanvas().toDataURL('image/png')
                                                 setSignature(tmp)
-                                                localStorage.setItem('signature', tmp)
+                                                localStorage.setItem('mobile_signature', tmp)
                                             }}
                                         />
                                     </Row>
@@ -513,7 +498,7 @@ function DesktopPaper() {
                                             </Row>
                                         }  value={printedName} placeholder='Open Sign' onChange={(e) => {
                                                 setPrintedName(e.target.value)
-                                                localStorage.setItem('printedName', e.target.value)
+                                                localStorage.setItem('mobile_printedName', e.target.value)
                                             }}
                                             
                                         />
@@ -527,7 +512,7 @@ function DesktopPaper() {
                                             </Row>
                                         }  value={nameInitials} placeholder='OS' onChange={(e) => {
                                                 setNameInitials(e.target.value)
-                                                localStorage.setItem('nameInitials', e.target.value)
+                                                localStorage.setItem('mobile_nameInitials', e.target.value)
                                             }}
                                             
                                         />
@@ -545,14 +530,14 @@ function DesktopPaper() {
                                 </Popover>
                             </Col>
 
-                            <Col span={4} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
+                            <Col span={6} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
                                 <Row justify='center'>
                                     <Space.Compact>
                                         <Popover content={<Typography>Open PDF</Typography>}>
                                             <Upload accept='.pdf' showUploadList={false} onChange={(info) => {
                                                 openPDF(info.file.originFileObj)
                                             }}>
-                                                <Button style={{'marginTop': '25px'}} shape='round'
+                                                <Button style={{'marginTop': '25px'}} shape='round' size='small'
                                                     disabled={progressPercent !== -1}
                                                     onClick={() => {
                                                     }}
@@ -565,7 +550,7 @@ function DesktopPaper() {
                                         </Popover>
                                         
                                         <Popover content={<Typography>Download PDF</Typography>}>
-                                            <Button style={{'marginTop': '25px'}} shape='round'
+                                            <Button style={{'marginTop': '25px'}} shape='round' size='small'
                                                 disabled={progressPercent !== -1}
                                                 onClick={() => {
                                                     saveAsPDF()
@@ -600,13 +585,13 @@ function DesktopPaper() {
                         <Upload.Dragger accept='.pdf' showUploadList={false} onChange={(info) => {
                                     openPDF(info.file.originFileObj)
                                 }}>
-                            <div style={{'width': '400px'}}>
+                            <div style={{'width': '300px'}}>
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
-                                <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                                <p className="ant-upload-text">Click to upload</p>
                                 <p className="ant-upload-hint">
-                                    Easily upload your PDF by clicking to select files from your device or dragging a PDF file and dropping into the box here.
+                                    Easily upload your PDF by clicking to select files from your device.
                                 </p>
                             </div>
                         </Upload.Dragger>
@@ -660,8 +645,8 @@ function DesktopPaper() {
 
                                                         setSignatureWidth(width)
                                                         setSignatureHeight(height)
-                                                        localStorage.setItem('signatureWidth', width)
-                                                        localStorage.setItem('signatureHeight', height)
+                                                        localStorage.setItem('mobile_signatureWidth', width)
+                                                        localStorage.setItem('mobile_signatureHeight', height)
                                                     }}
                                                     deleteItem={() => {
                                                         const newList = [
@@ -807,4 +792,4 @@ function DesktopPaper() {
     )
 }
 
-export default DesktopPaper
+export default MobilePaper

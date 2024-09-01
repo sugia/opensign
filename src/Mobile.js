@@ -38,7 +38,7 @@ function Mobile() {
 
             <Layout.Content>
                 {/* cover headline */}
-                <Row justify='center' align='middle' style={{'backgroundColor': 'white', 'height': '700px', 'paddingTop': '50px'}}>
+                <Row justify='center' align='middle' style={{'backgroundColor': 'white', 'height': '1000px', 'paddingTop': '50px'}}>
                     <Row justify='center' style={{'margin': '0px 20px'}}>
                         <Typography.Title level={2}>
                             {state.coverTitle}
@@ -51,7 +51,17 @@ function Mobile() {
                         </Typography>
                     </Row>
 
-
+                    <Row justify='center' style={{'margin': '20px'}}>
+                            <Button type='primary' size='large' shape='round' 
+                                style={{'margin': '0px 5px'}} 
+                                onClick={() => {
+                                    window.open(state.appURL + '/paper', '_self')
+                            }}>
+                                <Typography.Title level={5} style={{'color': 'white', 'marginTop': '7px'}}>
+                                    Get Started
+                                </Typography.Title>
+                            </Button>                
+                        </Row>
 
                     <Row justify='center' style={{'marginTop': '20px'}}>
                         <Image preview={false} src={state.coverImage} style={{'width': '100vw'}}></Image>
