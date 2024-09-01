@@ -36,6 +36,11 @@ import {
 } from '@ant-design/icons'
 
 import {
+    Popup,
+    Tabs,
+} from 'antd-mobile'
+
+import {
     useContext,
     useState,
     useEffect,
@@ -356,7 +361,7 @@ function MobilePaper() {
     const [isLoadingPDF, setIsLoadingPDF] = useState(false)
 
 
-
+    const [isToolsVisible, setIsToolsVisible] = useState(false)
 
     const readFileData = (file) => {
         return new Promise((resolve, reject) => {
@@ -434,110 +439,134 @@ function MobilePaper() {
                 <Layout.Header style={{'background': 'white', 'height': '70px', 'padding': '0px'}}>
                     <Row justify='center' align='top' style={{'backgroundColor': 'white', 'height': '100%'}}>
                         <Row justify='space-between' align='top' style={{'width': '100%', 'height': '100%', 'backgroundColor': 'white'}}>
+                            <Col span={2}>
+                                <Image preview={false} src={state.appLogo} style={{'width': '30px', 'height': '30px'}}></Image>  
+                            </Col>
                             <Col span={4}>
-                                <Row justify='center' align='bottom'>
-                                    <Col>
-                                        <Image height={30} preview={false} src={state.appLogo}></Image>
-                                    </Col>
-                                </Row>
+                                <Typography style={{'fontSize': '14px', 'marginTop': '25px'}}>{state.appName}</Typography>
                             </Col>
 
                             
-                            <Col span={14} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
-
-                                <Segmented
-                                    style={{'marginTop': '25px'}}
-                                    options={segmentedOptions}
-                                    value={segmentedValue}
-                                    onChange={(value) => {
-                                        setSegmentedValue(value)
-                                    }}
-                                />
+                            <Col offset={2} span={8} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
+                                <Button shape='round' style={{'marginTop': '20px'}} onClick={() => {
+                                    setIsToolsVisible(true)
+                                }}>
+                                    {segmentedValue}
+                                </Button>
                                 
-                                <Popover trigger='click' placement='bottomLeft' content={
+                                <Popup
+                                    visible={isToolsVisible}
+                                    onMaskClick={() => {
+                                        setIsToolsVisible(false)
+                                    }}
+                                    onClose={() => {
+                                        setIsToolsVisible(false)
+                                    }}
+                                    bodyStyle={{'height': '40vh'}}
+                                >
                                     <>
-                                    <Row justify='space-between' align='middle'>
-                                        <Col>
-                                            <Typography>
-                                                Signature
-                                            </Typography>
-                                        </Col>
-                                        <Col>
-                                            <Button type='text' onClick={() => {
-                                                    signatureRef?.current?.clear()
-                                                    localStorage.removeItem('mobile_signature')
-                                                    setSignature('')
-                                                }}
-                                                icon={<DeleteOutlined />}
-                                            >
-                                            Clear Signature
-                                            </Button>
-                                        </Col>
-                                    </Row>
-                                    <Row justify='center' 
-                                        style={{'borderRadius': '16px', 'boxShadow': "5px 8px 24px 5px rgba(208, 216, 243, 0.4)",
-                                            'margin': '10px 0px'
-                                        }}>
-                                        <SignatureCanvas ref={signatureRef} penColor='blue' canvasProps={{
-                                            width: signatureCanvasWidth, height: signatureCanvasHeight}}     
 
-                                            onEnd={() => {
-                                                const tmp = signatureRef.current.getCanvas().toDataURL('image/png')
-                                                setSignature(tmp)
-                                                localStorage.setItem('mobile_signature', tmp)
-                                            }}
-                                        />
-                                    </Row>
+                                    <Tabs activeKey={segmentedValue} onChange={(key) => {
+                                        setSegmentedValue(key)
+                                    }}>
+                                        <Tabs.Tab title='Text Box' key='Text Box'>
+
+                                        </Tabs.Tab>
+
+                                        <Tabs.Tab title='Signature' key='Signature'>
+                                            <>
+                                            <Row justify='space-between' align='middle'>
+                                                <Col>
+                                                    <Typography>
+                                                        Signature
+                                                    </Typography>
+                                                </Col>
+                                                <Col>
+                                                    <Button type='text' onClick={() => {
+                                                            signatureRef?.current?.clear()
+                                                            localStorage.removeItem('mobile_signature')
+                                                            setSignature('')
+                                                        }}
+                                                        icon={<DeleteOutlined />}
+                                                    >
+                                                    Clear Signature
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+
+                                            <Row justify='center' 
+                                                style={{'borderRadius': '16px', 'boxShadow': "5px 8px 24px 5px rgba(208, 216, 243, 0.4)",
+                                                    'margin': '10px 0px'
+                                                }}>
+                                                <SignatureCanvas ref={signatureRef} penColor='blue' canvasProps={{
+                                                    width: signatureCanvasWidth, height: signatureCanvasHeight}}     
+
+                                                    onEnd={() => {
+                                                        const tmp = signatureRef.current.getCanvas().toDataURL('image/png')
+                                                        setSignature(tmp)
+                                                        localStorage.setItem('mobile_signature', tmp)
+                                                    }}
+                                                />
+                                            </Row>
+                                            </>
+                                        </Tabs.Tab>
+
+                                        <Tabs.Tab title='Printed Name' key='Printed Name'>
+                                            <Row justify='start' style={{'margin': '10px 0px'}}>
+
+                                                <Input addonBefore={
+                                                    <Row style={{'width': '100px'}}>
+                                                        <Typography>Printed Name:</Typography>
+                                                    </Row>
+                                                }  value={printedName} placeholder='Open Sign' onChange={(e) => {
+                                                        setPrintedName(e.target.value)
+                                                        localStorage.setItem('mobile_printedName', e.target.value)
+                                                    }}
+                                                    
+                                                />
+
+                                            </Row>
+                                        </Tabs.Tab>
+
+                                        <Tabs.Tab title='Name Initials' key='Name Initials'>
+                                            <Row justify='start' style={{'margin': '10px 0px'}}>
+                                                <Input addonBefore={
+                                                    <Row style={{'width': '100px'}}>
+                                                        <Typography>Name Initials:</Typography>
+                                                    </Row>
+                                                }  value={nameInitials} placeholder='OS' onChange={(e) => {
+                                                        setNameInitials(e.target.value)
+                                                        localStorage.setItem('mobile_nameInitials', e.target.value)
+                                                    }}
+                                                    
+                                                />
+                                            </Row>
+                                        </Tabs.Tab>
+                                    </Tabs>
                                     
 
-                                    <Row justify='start' style={{'margin': '10px 0px'}}>
-
-                                        <Input addonBefore={
-                                            <Row style={{'width': '100px'}}>
-                                                <Typography>Printed Name:</Typography>
-                                            </Row>
-                                        }  value={printedName} placeholder='Open Sign' onChange={(e) => {
-                                                setPrintedName(e.target.value)
-                                                localStorage.setItem('mobile_printedName', e.target.value)
-                                            }}
-                                            
-                                        />
-
-                                    </Row>
                                     
-                                    <Row justify='start' style={{'margin': '10px 0px'}}>
-                                        <Input addonBefore={
-                                            <Row style={{'width': '100px'}}>
-                                                <Typography>Name Initials:</Typography>
-                                            </Row>
-                                        }  value={nameInitials} placeholder='OS' onChange={(e) => {
-                                                setNameInitials(e.target.value)
-                                                localStorage.setItem('mobile_nameInitials', e.target.value)
-                                            }}
-                                            
-                                        />
-                                    </Row>
+
+
+                                    
+
 
 
                                     </>
-                                }>
+                                </Popup>
+
                                 
-                                
-                                    <Button type='text' icon={<EditOutlined style={{'color': 'gray'}} />} onClick={() => {
-                                    }}>
-                                    </Button>
-                                
-                                </Popover>
+
                             </Col>
 
-                            <Col span={6} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
-                                <Row justify='center'>
+                            <Col span={8} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
+                                <Row justify='center' style={{'marginTop': '20px'}} >
                                     <Space.Compact>
                                         <Popover content={<Typography>Open PDF</Typography>}>
                                             <Upload accept='.pdf' showUploadList={false} onChange={(info) => {
                                                 openPDF(info.file.originFileObj)
                                             }}>
-                                                <Button style={{'marginTop': '25px'}} shape='round' size='small'
+                                                <Button shape='round' size='medium'
                                                     disabled={progressPercent !== -1}
                                                     onClick={() => {
                                                     }}
@@ -550,7 +579,7 @@ function MobilePaper() {
                                         </Popover>
                                         
                                         <Popover content={<Typography>Download PDF</Typography>}>
-                                            <Button style={{'marginTop': '25px'}} shape='round' size='small'
+                                            <Button shape='round' size='medium'
                                                 disabled={progressPercent !== -1}
                                                 onClick={() => {
                                                     saveAsPDF()
