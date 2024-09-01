@@ -72,6 +72,7 @@ function DraggableImage(props) {
     const updateWidthHeight = props.updateWidthHeight
     const deleteItem = props.deleteItem
 
+    
     return (
             <Space.Compact
                 style={{'display': 'flex', 'position': 'fixed'}}                      

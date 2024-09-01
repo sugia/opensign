@@ -73,8 +73,13 @@ function DraggableText(props) {
     const updateXY = props.updateXY
     const deleteItem = props.deleteItem
 
+    // to mute findDOMNode error
+    // https://stackoverflow.com/questions/63603902/finddomnode-is-deprecated-in-strictmode-finddomnode-was-passed-an-instance-of-d
+    const nodeRef = useRef(null)
+
     return (
         <Draggable
+            nodeRef={nodeRef}
             position={{x: x, y: y}} 
             onStop={(e, data) => {
                 setX(data['lastX'])
@@ -82,7 +87,7 @@ function DraggableText(props) {
                 updateXY(data['lastX'], data['lastY'])
             }}                     
         >
-            <Row justify='start'>
+            <Row justify='start' ref={nodeRef}>
                 <Space.Compact
                     onMouseEnter={() => {
                         setIsFocused(true)
