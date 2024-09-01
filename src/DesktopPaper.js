@@ -31,6 +31,8 @@ import {
     BulbOutlined,
     AlertOutlined,
     FolderOpenOutlined,
+    PlusOutlined,
+    InboxOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -448,19 +450,19 @@ function DesktopPaper() {
 
                             <Col offset={2} span={4}>
                                 <Popover content={<Typography>Open PDF</Typography>}>
-                                <Upload showUploadList={false} onChange={(info) => {
-                                    openPDF(info.file.originFileObj)
-                                }}>
-                                    <Button style={{'marginTop': '25px'}} shape='circle'
-                                        disabled={progressPercent !== -1}
-                                        onClick={() => {
-                                        }}
-                                        icon={
-                                            <FolderOpenOutlined style={{'color': 'gray'}} />
-                                        }
-                                    >
-                                    </Button>
-                                </Upload>
+                                    <Upload accept='.pdf' showUploadList={false} onChange={(info) => {
+                                        openPDF(info.file.originFileObj)
+                                    }}>
+                                        <Button style={{'marginTop': '25px'}} shape='circle'
+                                            disabled={progressPercent !== -1}
+                                            onClick={() => {
+                                            }}
+                                            icon={
+                                                <FolderOpenOutlined style={{'color': 'gray'}} />
+                                            }
+                                        >
+                                        </Button>
+                                    </Upload>
                                 </Popover>
                             </Col>
                             
@@ -591,7 +593,19 @@ function DesktopPaper() {
             <Layout.Content style={{'backgroundColor': 'white'}} >
                 { !isLoadingPDF && PDFImages.length === 0 &&
                     <Row justify='center' align='middle' style={{'height': '80vh'}}>
-                        <Empty />
+                        <Upload.Dragger accept='.pdf' showUploadList={false} onChange={(info) => {
+                                    openPDF(info.file.originFileObj)
+                                }}>
+                            <div style={{'width': '400px'}}>
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                                <p className="ant-upload-hint">
+                                    Easily upload your PDF by clicking to select files from your device or dragging a PDF file and dropping into the box here.
+                                </p>
+                            </div>
+                        </Upload.Dragger>
                     </Row>
                 }
                 { isLoadingPDF &&
