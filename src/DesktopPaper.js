@@ -15,6 +15,8 @@ import {
     Segmented,
     Modal,
     Upload,
+    Empty,
+    Spin,
 } from 'antd'
 
 import {
@@ -28,6 +30,7 @@ import {
     UploadOutlined,
     BulbOutlined,
     AlertOutlined,
+    FolderOpenOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -36,6 +39,7 @@ import {
     useEffect,
     useRef,
     useMemo,
+    useCallback,
 } from 'react'
 
 import { Context } from './store/Context'
@@ -267,7 +271,13 @@ function DesktopPaper() {
     const [pdf, setPdf] = useState(new jsPDF('p', 'mm', 'a4'))
     
     const printRef = useRef()
-    const signatureRef = useRef()
+    // const signatureRef = useRef()
+
+    const signatureRef = useCallback((node) => {
+        const tmp = localStorage.getItem('signature')
+        node?.fromDataURL(tmp, { width: signatureCanvasWidth, height: signatureCanvasHeight })
+        setRerenderListCompletely(false)
+    }, [])
     
     const sleep = (ms) => {
         return new Promise(resolve => setTimeout(resolve, ms))
@@ -343,15 +353,9 @@ function DesktopPaper() {
     const [signatureWidth, setSignatureWidth] = useState(localStorage.getItem('signatureWidth') || signatureCanvasWidth)
     const [signatureHeight, setSignatureHeight] = useState(localStorage.getItem('signatureHeight') || signatureCanvasHeight)
     
+    const [isLoadingPDF, setIsLoadingPDF] = useState(false)
 
-    useEffect(() => {
-        if (signatureRef.current) {
-            const tmp = localStorage.getItem('signature')
 
-            signatureRef.current.fromDataURL(tmp, { width: signatureCanvasWidth, height: signatureCanvasHeight })
-            setRerenderListCompletely(false)
-        }
-    }, [signatureRef.current])
 
 
     const readFileData = (file) => {
@@ -390,11 +394,14 @@ function DesktopPaper() {
         setImagePageNumber(1)
         setImagePageNumberEnd(images.length)
         // localStorage.setItem('PDFImages', JSON.stringify(images))
+        setIsLoadingPDF(false)
         return images;
     }
 
     const openPDF = (file) => {
         // console.log(file)
+        setIsLoadingPDF(true)
+
         convertPdfToImages(file)
             .then((images) => {
                 setPDFImages(images)
@@ -440,20 +447,21 @@ function DesktopPaper() {
                             </Col>
 
                             <Col offset={2} span={4}>
+                                <Popover content={<Typography>Open PDF</Typography>}>
                                 <Upload showUploadList={false} onChange={(info) => {
                                     openPDF(info.file.originFileObj)
                                 }}>
-                                    <Button style={{'marginTop': '25px'}}
+                                    <Button style={{'marginTop': '25px'}} shape='circle'
                                         disabled={progressPercent !== -1}
                                         onClick={() => {
                                         }}
                                         icon={
-                                            <UploadOutlined />
+                                            <FolderOpenOutlined style={{'color': 'gray'}} />
                                         }
                                     >
-                                        Open PDF
                                     </Button>
                                 </Upload>
+                                </Popover>
                             </Col>
                             
                             <Col span={10} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
@@ -550,20 +558,22 @@ function DesktopPaper() {
                             </Col>
 
                             <Col span={4} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
-                                <Button style={{'marginTop': '25px'}}
+                                <Popover content={<Typography>Download PDF</Typography>}>
+                                <Button style={{'marginTop': '25px'}} shape='circle'
                                     disabled={progressPercent !== -1}
                                     onClick={() => {
                                         saveAsPDF()
                                     }}
                                     icon={
                                         progressPercent === -1?
-                                            <DownloadOutlined />
+                                            <DownloadOutlined style={{'color': 'gray'}} />
                                         :
                                             <Progress type='circle' percent={progressPercent} size={14} />
                                     }
                                 >
-                                    Download PDF
+                                    
                                 </Button>
+                                </Popover>
                             </Col>
                             
                         </Row>
@@ -577,9 +587,23 @@ function DesktopPaper() {
             </Affix>
 
             <Layout.Content style={{'backgroundColor': 'white'}} >
-
+                { !isLoadingPDF && PDFImages.length === 0 &&
+                    <Row justify='center' align='middle' style={{'height': '80vh'}}>
+                        <Empty />
+                    </Row>
+                }
+                { isLoadingPDF &&
+                    <Row justify='center' align='middle' style={{'height': '80vh'}}>
+                        <Spin size='large' />
+                    </Row>
+                }
+                {
+                    !isLoadingPDF && PDFImages.length > 0 &&
+                
                 <Row justify='center'>
+
                     <Col>
+
                         {/** printableSection
                             https://stackoverflow.com/questions/44989119/generating-a-pdf-file-from-react-components 
                         */}
@@ -726,8 +750,9 @@ function DesktopPaper() {
                         </Row>
                     </Col>
                 </Row>
-
-                { PDFImages.length > 0 &&
+                }
+                
+                { !isLoadingPDF && PDFImages.length > 0 &&
                 <Row justify='center' align='middle' style={{'width': '100%'}} >
                     <Space.Compact>
 
