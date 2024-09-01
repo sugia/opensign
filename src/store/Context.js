@@ -25,6 +25,12 @@ export const initialState = {
 
     emailImage: emailImage,
     emailLink: 'mailto:contact@jomimi.com',
+
+    signatureCanvasWidth: 500,
+    signatureCanvasHeight: 200,
+    signature: '',
+    printedName: '',
+    nameNintials: '',
 }
 
 

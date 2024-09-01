@@ -13,6 +13,7 @@
     "jspdf": "^2.5.1",
     "pdfjs-dist": "^4.5.136",
     "react": "^18.3.1",
+    "react-canvas-draw-v2": "^2.0.1",
     "react-dom": "^18.3.1",
     "react-draggable": "^4.4.6",
     "react-rnd": "^10.4.12",

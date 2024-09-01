@@ -17,6 +17,7 @@ import {
     Upload,
     Empty,
     Spin,
+    Drawer,
 } from 'antd'
 
 import {
@@ -64,175 +65,10 @@ import {
 
 import * as PDFJS from 'pdfjs-dist/webpack'
 
-function DraggableImage(props) {
-    const [content, setContent] = useState(props.content || '')
-    const [x, setX] = useState(props.x || 0)
-    const [y, setY] = useState(props.y || 0)
 
-
-    const [isFocused, setIsFocused] = useState(false)
-
-    const [width, setWidth] = useState(props.width || 500)
-    const [height, setHeight] = useState(props.height || 200)
-
-    const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false)
-
-    const updateXY = props.updateXY
-    const updateWidthHeight = props.updateWidthHeight
-    const deleteItem = props.deleteItem
-
-    return (
-            <Space.Compact
-                style={{'display': 'flex', 'position': 'fixed'}}                      
-                onMouseEnter={() => {
-                    setIsFocused(true)
-                }}
-                onMouseLeave={() => {
-                    setIsFocused(false)
-                }}
-            >
-                <Rnd
-                    size={{width: width, height: height}}
-                    position={{x: x, y: y}} 
-                    onDragStop={(e, data) => {
-                        setX(data['lastX'])
-                        setY(data['lastY'])
-                        updateXY(data['lastX'], data['lastY'])
-                    }}
-                    onResizeStop={(e, direction, ref, delta, position) => {
-                        setWidth(ref.style.width)
-                        setHeight(ref.style.height)
-                        updateWidthHeight(ref.style.width, ref.style.height)
-                    }}
-                >
-
-                    <Image preview={false} src={content} 
-                        style={{
-                            'width': '100%', 
-                            'height': '100%', 
-                            'border': isFocused? '2px dashed gray' : undefined,
-                        }} 
-                    />
-
-                    <Button 
-                        danger={isDeleteConfirmVisible? true : false} 
-                        type={isDeleteConfirmVisible? 'primary': 'default'}
-                        size='small' 
-                        icon={<CloseOutlined />} 
-                        onClick={() => {
-                            if (isDeleteConfirmVisible) {
-                                setIsDeleteConfirmVisible(false)
-                                setIsFocused(false)
-                                
-                                deleteItem()
-                            } else {
-                                setIsDeleteConfirmVisible(true)
-                                setTimeout(() => {
-                                    setIsDeleteConfirmVisible(false)
-                                }, 2000)
-                            }
-                        }}
-                        style={{'visibility': isFocused? 'visible': 'hidden', 'position': 'absolute'}}
-                    />
-                </Rnd>
-            
-                
-            </Space.Compact>
-
-
-    )
-}
-function DraggableText(props) {
-    const [content, setContent] = useState(props.content || '')
-    const [x, setX] = useState(props.x || 0)
-    const [y, setY] = useState(props.y || 0)
-
-
-    const contentWidth = useMemo(() => {
-        return (content.length * 10) + 'px'
-    }, [content])
-
-    const [isFocused, setIsFocused] = useState(false)
-
-
-    const inputRef = useRef(null)
-
-    const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false)
-
-    const updateContent = props.updateContent
-    const updateXY = props.updateXY
-    const deleteItem = props.deleteItem
-
-    return (
-        <Draggable
-            position={{x: x, y: y}} 
-            onStop={(e, data) => {
-                setX(data['lastX'])
-                setY(data['lastY'])
-                updateXY(data['lastX'], data['lastY'])
-            }}                     
-        >
-            <Row justify='start'>
-                <Space.Compact
-                    onMouseEnter={() => {
-                        setIsFocused(true)
-                        inputRef.current?.focus({
-                            cursor: 'end',
-                        })
-                    }}
-                    onMouseLeave={() => {
-                        setIsFocused(false)
-                        inputRef.current?.blur()
-                    }}
-                    style={{'display': 'flex', 'position': 'fixed'}} 
-                >
-                    <Input
-                        ref={inputRef}
-                        variant={isFocused? 'outlined' : 'borderless'}
-                        size='small' 
-                        placeholder='text box' 
-                        style={{
-                            'width': contentWidth, 
-                            'minWidth': '100px', 
-                            'backgroundColor': isFocused ? 'white' : content === ''? 'mistyRose' : 'rgba(0,0,0,0)',
-                            'color': 'blue',
-                        }} 
-                        value={content} 
-                        onChange={(e) => {
-                            setContent(e.target.value)
-                            updateContent(e.target.value)
-                        }}
-                        onPressEnter={() => {
-                            setIsFocused(false)
-                        }}
-                    />
-
-                    <Button 
-                        danger={isDeleteConfirmVisible? true : false} 
-                        type={isDeleteConfirmVisible? 'primary': 'default'}
-                        size='small' 
-                        icon={<CloseOutlined />} 
-                        onClick={() => {
-                            if (isDeleteConfirmVisible) {
-                                setIsDeleteConfirmVisible(false)
-
-                                setIsFocused(false)
-                                
-                                deleteItem()
-                            } else {
-                                setIsDeleteConfirmVisible(true)
-                                setTimeout(() => {
-                                    setIsDeleteConfirmVisible(false)
-                                }, 2000)
-                            }
-                        }}
-                        style={{'visibility': isFocused? 'visible': 'hidden'}}
-                    />
-                </Space.Compact>
-            </Row>
-        </Draggable>
-    )
-}
+import DraggableText from './DraggableText'
+import DraggableImage from './DraggableImage'
+import DesktopDrawingPad from './DesktopDrawingPad'
 
 function DesktopPaper() {
     const {state, dispatch} = useContext(Context)
@@ -273,13 +109,7 @@ function DesktopPaper() {
     const [pdf, setPdf] = useState(new jsPDF('p', 'mm', 'a4'))
     
     const printRef = useRef()
-    // const signatureRef = useRef()
 
-    const signatureRef = useCallback((node) => {
-        const tmp = localStorage.getItem('signature')
-        node?.fromDataURL(tmp, { width: signatureCanvasWidth, height: signatureCanvasHeight })
-        setRerenderListCompletely(false)
-    }, [])
     
     const sleep = (ms) => {
         return new Promise(resolve => setTimeout(resolve, ms))
@@ -429,7 +259,11 @@ function DesktopPaper() {
             res.push('Name Initials')
         }
         return res
-    }, [signature, printedName, nameInitials])
+    }, [signature, printedName, nameInitials, rerenderListCompletely])
+
+
+    const [IsDrawingPadVisible, setIsDrawingPadVisible] = useState(false)
+
     return (
         <Layout style={{'minWidth': '1000px'}}>
 
@@ -460,6 +294,7 @@ function DesktopPaper() {
                                     </Button>
                                 </Popover>
 
+
                                 <Segmented
                                     style={{'marginTop': '25px'}}
                                     options={segmentedOptions}
@@ -468,81 +303,23 @@ function DesktopPaper() {
                                         setSegmentedValue(value)
                                     }}
                                 />
+
                                 
-                                <Popover trigger='click' placement='bottomLeft' content={
-                                    <>
-                                    <Row justify='space-between' align='middle'>
-                                        <Col>
-                                            <Typography>
-                                                Signature
-                                            </Typography>
-                                        </Col>
-                                        <Col>
-                                            <Button type='text' onClick={() => {
-                                                    signatureRef?.current?.clear()
-                                                    localStorage.removeItem('signature')
-                                                    setSignature('')
-                                                }}
-                                                icon={<DeleteOutlined />}
-                                            >
-                                            Clear Signature
-                                            </Button>
-                                        </Col>
-                                    </Row>
-                                    <Row justify='center' 
-                                        style={{'borderRadius': '16px', 'boxShadow': "5px 8px 24px 5px rgba(208, 216, 243, 0.4)",
-                                            'margin': '10px 0px'
-                                        }}>
-                                        <SignatureCanvas ref={signatureRef} penColor='blue' canvasProps={{
-                                            width: signatureCanvasWidth, height: signatureCanvasHeight}}     
-
-                                            onEnd={() => {
-                                                const tmp = signatureRef.current.getCanvas().toDataURL('image/png')
-                                                setSignature(tmp)
-                                                localStorage.setItem('signature', tmp)
-                                            }}
-                                        />
-                                    </Row>
-                                    
-
-                                    <Row justify='start' style={{'margin': '10px 0px'}}>
-
-                                        <Input addonBefore={
-                                            <Row style={{'width': '100px'}}>
-                                                <Typography>Printed Name:</Typography>
-                                            </Row>
-                                        }  value={printedName} placeholder='Open Sign' onChange={(e) => {
-                                                setPrintedName(e.target.value)
-                                                localStorage.setItem('printedName', e.target.value)
-                                            }}
-                                            
-                                        />
-
-                                    </Row>
-                                    
-                                    <Row justify='start' style={{'margin': '10px 0px'}}>
-                                        <Input addonBefore={
-                                            <Row style={{'width': '100px'}}>
-                                                <Typography>Name Initials:</Typography>
-                                            </Row>
-                                        }  value={nameInitials} placeholder='OS' onChange={(e) => {
-                                                setNameInitials(e.target.value)
-                                                localStorage.setItem('nameInitials', e.target.value)
-                                            }}
-                                            
-                                        />
-                                    </Row>
-
-
-                                    </>
+                                <Popover trigger='click' placement='bottomLeft' title='' content={
+                                
+                                    <DesktopDrawingPad />
                                 }>
                                 
-                                
-                                    <Button type='text' icon={<EditOutlined style={{'color': 'gray'}} />} onClick={() => {
+                                <Button type='text' icon={<EditOutlined style={{'color': 'gray'}} />} onClick={() => {
                                     }}>
+
                                     </Button>
-                                
                                 </Popover>
+                                
+
+                                
+
+      
                             </Col>
 
                             <Col span={4} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
