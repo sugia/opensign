@@ -558,22 +558,24 @@ function DesktopPaper() {
                             </Col>
 
                             <Col span={4} style={{'visibility': PDFImages.length === 0? 'hidden' : 'visible'}}>
-                                <Popover content={<Typography>Download PDF</Typography>}>
-                                <Button style={{'marginTop': '25px'}} shape='circle'
-                                    disabled={progressPercent !== -1}
-                                    onClick={() => {
-                                        saveAsPDF()
-                                    }}
-                                    icon={
-                                        progressPercent === -1?
-                                            <DownloadOutlined style={{'color': 'gray'}} />
-                                        :
-                                            <Progress type='circle' percent={progressPercent} size={14} />
-                                    }
-                                >
-                                    
-                                </Button>
-                                </Popover>
+                                <Row justify='center'>
+                                    <Popover content={<Typography>Download PDF</Typography>}>
+                                        <Button style={{'marginTop': '25px'}} shape='circle'
+                                            disabled={progressPercent !== -1}
+                                            onClick={() => {
+                                                saveAsPDF()
+                                            }}
+                                            icon={
+                                                progressPercent === -1?
+                                                    <DownloadOutlined style={{'color': 'gray'}} />
+                                                :
+                                                    <Progress type='circle' percent={progressPercent} size={14} />
+                                            }
+                                        >
+                                            
+                                        </Button>
+                                    </Popover>
+                                </Row>
                             </Col>
                             
                         </Row>
