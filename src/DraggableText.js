@@ -80,12 +80,12 @@ function DraggableText(props) {
     return (
         <Draggable
             nodeRef={nodeRef}
-            position={{x: x, y: y}} 
+            position={{ x: x, y: y }}
             onStop={(e, data) => {
                 setX(data['lastX'])
                 setY(data['lastY'])
                 updateXY(data['lastX'], data['lastY'])
-            }}                     
+            }}
         >
             <Row justify='start' ref={nodeRef}>
                 <Space.Compact
@@ -99,20 +99,20 @@ function DraggableText(props) {
                         setIsFocused(false)
                         inputRef.current?.blur()
                     }}
-                    style={{'display': 'flex', 'position': 'fixed'}} 
+                    style={{ 'display': 'flex', 'position': 'fixed' }}
                 >
                     <Input
                         ref={inputRef}
-                        variant={isFocused? 'outlined' : 'borderless'}
-                        size='small' 
-                        placeholder='text box' 
+                        variant={isFocused ? 'outlined' : 'borderless'}
+                        size='small'
+                        placeholder='text box'
                         style={{
-                            'width': contentWidth, 
-                            'minWidth': '100px', 
-                            'backgroundColor': isFocused ? 'white' : content === ''? 'mistyRose' : 'rgba(0,0,0,0)',
+                            'width': contentWidth,
+                            'minWidth': '100px',
+                            'backgroundColor': isFocused ? 'white' : content === '' ? 'mistyRose' : 'rgba(0,0,0,0)',
                             'color': 'blue',
-                        }} 
-                        value={content} 
+                        }}
+                        value={content}
                         onChange={(e) => {
                             setContent(e.target.value)
                             updateContent(e.target.value)
@@ -122,17 +122,17 @@ function DraggableText(props) {
                         }}
                     />
 
-                    <Button 
-                        danger={isDeleteConfirmVisible? true : false} 
-                        type={isDeleteConfirmVisible? 'primary': 'default'}
-                        size='small' 
-                        icon={<CloseOutlined />} 
+                    <Button
+                        danger={isDeleteConfirmVisible ? true : false}
+                        type={isDeleteConfirmVisible ? 'primary' : 'default'}
+                        size='small'
+                        icon={<CloseOutlined />}
                         onClick={() => {
                             if (isDeleteConfirmVisible) {
                                 setIsDeleteConfirmVisible(false)
 
                                 setIsFocused(false)
-                                
+
                                 deleteItem()
                             } else {
                                 setIsDeleteConfirmVisible(true)
@@ -141,7 +141,7 @@ function DraggableText(props) {
                                 }, 2000)
                             }
                         }}
-                        style={{'visibility': isFocused? 'visible': 'hidden'}}
+                        style={{ 'visibility': isFocused ? 'visible' : 'hidden' }}
                     />
                 </Space.Compact>
             </Row>

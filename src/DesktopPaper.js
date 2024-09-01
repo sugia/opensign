@@ -260,43 +260,41 @@ function DesktopPaper() {
                                 </Row>
                             </Col>
 
-                            <Col offset={2} span={4}>
 
-                            </Col>
-
-                            <Col span={10} style={{ 'visibility': PDFImages.length === 0 ? 'hidden' : 'visible' }}>
-                                <Popover content={<Typography>Ctrl + Click on the PDF file below to add a new item</Typography>}>
-                                    <Button style={{ 'cursor': 'default' }}
-                                        type='text'
-                                        icon={<HomeOutlined style={{ 'color': 'gray' }} />}>
-                                    </Button>
-                                </Popover>
+                            <Col span={16} style={{ 'visibility': PDFImages.length === 0 ? 'hidden' : 'visible' }}>
+                                <Row justify='center' align='bottom'>
+                                    <Popover content={<Typography>Ctrl + Click on the PDF file below to add a new item</Typography>}>
+                                        <Button style={{ 'cursor': 'default' }}
+                                            type='text'
+                                            icon={<HomeOutlined style={{ 'color': 'gray' }} />}>
+                                        </Button>
+                                    </Popover>
 
 
-                                <Segmented
-                                    style={{ 'marginTop': '25px' }}
-                                    options={segmentedOptions}
-                                    value={segmentedValue}
-                                    onChange={(value) => {
-                                        setSegmentedValue(value)
-                                    }}
-                                />
+                                    <Segmented
+                                        style={{ 'marginTop': '25px' }}
+                                        options={segmentedOptions}
+                                        value={segmentedValue}
+                                        onChange={(value) => {
+                                            setSegmentedValue(value)
+                                        }}
+                                    />
 
 
-                                <Popover trigger='click' placement='bottomLeft' title='' content={
+                                    <Popover trigger='click' placement='bottomLeft' title='' content={
 
-                                    <DesktopDrawingPad />
-                                }>
+                                        <DesktopDrawingPad />
+                                    }>
 
-                                    <Button type='text' icon={<EditOutlined style={{ 'color': 'gray' }} />} onClick={() => {
-                                    }}>
+                                        <Button type='text' icon={<EditOutlined style={{ 'color': 'gray' }} />} onClick={() => {
+                                        }}>
 
-                                    </Button>
-                                </Popover>
+                                        </Button>
+                                    </Popover>
 
 
 
-
+                                </Row>
 
                             </Col>
 

@@ -72,64 +72,64 @@ function DraggableImage(props) {
     const updateWidthHeight = props.updateWidthHeight
     const deleteItem = props.deleteItem
 
-    
+
     return (
-            <Space.Compact
-                style={{'display': 'flex', 'position': 'fixed'}}                      
-                onMouseEnter={() => {
-                    setIsFocused(true)
+        <Space.Compact
+            style={{ 'display': 'flex', 'position': 'fixed' }}
+            onMouseEnter={() => {
+                setIsFocused(true)
+            }}
+            onMouseLeave={() => {
+                setIsFocused(false)
+            }}
+        >
+            <Rnd
+                size={{ width: width, height: height }}
+                position={{ x: x, y: y }}
+                onDragStop={(e, data) => {
+                    setX(data['lastX'])
+                    setY(data['lastY'])
+                    updateXY(data['lastX'], data['lastY'])
                 }}
-                onMouseLeave={() => {
-                    setIsFocused(false)
+                onResizeStop={(e, direction, ref, delta, position) => {
+                    setWidth(ref.style.width)
+                    setHeight(ref.style.height)
+                    updateWidthHeight(ref.style.width, ref.style.height)
                 }}
             >
-                <Rnd
-                    size={{width: width, height: height}}
-                    position={{x: x, y: y}} 
-                    onDragStop={(e, data) => {
-                        setX(data['lastX'])
-                        setY(data['lastY'])
-                        updateXY(data['lastX'], data['lastY'])
-                    }}
-                    onResizeStop={(e, direction, ref, delta, position) => {
-                        setWidth(ref.style.width)
-                        setHeight(ref.style.height)
-                        updateWidthHeight(ref.style.width, ref.style.height)
-                    }}
-                >
 
-                    <Image preview={false} src={content} 
-                        style={{
-                            'width': '100%', 
-                            'height': '100%', 
-                            'border': isFocused? '2px dashed gray' : undefined,
-                        }} 
-                    />
+                <Image preview={false} src={content}
+                    style={{
+                        'width': '100%',
+                        'height': '100%',
+                        'border': isFocused ? '2px dashed gray' : undefined,
+                    }}
+                />
 
-                    <Button 
-                        danger={isDeleteConfirmVisible? true : false} 
-                        type={isDeleteConfirmVisible? 'primary': 'default'}
-                        size='small' 
-                        icon={<CloseOutlined />} 
-                        onClick={() => {
-                            if (isDeleteConfirmVisible) {
+                <Button
+                    danger={isDeleteConfirmVisible ? true : false}
+                    type={isDeleteConfirmVisible ? 'primary' : 'default'}
+                    size='small'
+                    icon={<CloseOutlined />}
+                    onClick={() => {
+                        if (isDeleteConfirmVisible) {
+                            setIsDeleteConfirmVisible(false)
+                            setIsFocused(false)
+
+                            deleteItem()
+                        } else {
+                            setIsDeleteConfirmVisible(true)
+                            setTimeout(() => {
                                 setIsDeleteConfirmVisible(false)
-                                setIsFocused(false)
-                                
-                                deleteItem()
-                            } else {
-                                setIsDeleteConfirmVisible(true)
-                                setTimeout(() => {
-                                    setIsDeleteConfirmVisible(false)
-                                }, 2000)
-                            }
-                        }}
-                        style={{'visibility': isFocused? 'visible': 'hidden', 'position': 'absolute'}}
-                    />
-                </Rnd>
-            
-                
-            </Space.Compact>
+                            }, 2000)
+                        }
+                    }}
+                    style={{ 'visibility': isFocused ? 'visible' : 'hidden', 'position': 'absolute' }}
+                />
+            </Rnd>
+
+
+        </Space.Compact>
 
 
     )
