@@ -107,6 +107,7 @@ function DesktopPaper() {
     }
 
 
+    const [lastImagePageNumber, setLastImagePageNumber] = useState(1)
 
     useEffect(() => {
         if (!isPrintingPage) {
@@ -142,7 +143,10 @@ function DesktopPaper() {
 
                         setTimeout(() => {
                             setProgressPercent(-1)
+                            setImagePageNumber(lastImagePageNumber)
                         }, 2000)
+
+
                     }
                 })
         })
@@ -152,13 +156,13 @@ function DesktopPaper() {
 
 
     const saveAsPDF = async () => {
+        setLastImagePageNumber(imagePageNumber)
+
         setPdf(new jsPDF('p', 'mm', 'a4'))
 
-        setIsPrintingPage(true)
-        setImagePageNumber(imagePageNumberStart)
-
         setProgressPercent(0)
-
+        setImagePageNumber(imagePageNumberStart)
+        setIsPrintingPage(true)
     }
 
     const [segmentedValue, setSegmentedValue] = useState('Text Box')
@@ -241,6 +245,7 @@ function DesktopPaper() {
     }, [state.signature, state.printedName, state.nameInitials, rerenderListCompletely])
 
 
+    const [isDownloadConfirmVisible, setIsDownloadConfirmVisible] = useState(false)
 
     return (
         <Layout style={{ 'minWidth': '1000px' }}>
@@ -318,14 +323,27 @@ function DesktopPaper() {
                                         </Popover>
 
                                         <Popover content={<Typography>Download PDF</Typography>}>
-                                            <Button style={{ 'marginTop': '25px' }} shape='round'
+                                            <Button style={{
+                                                'marginTop': '25px',
+                                                'backgroundColor': isDownloadConfirmVisible ? 'lawnGreen' : 'white'
+                                            }}
+                                                shape='round'
                                                 disabled={progressPercent !== -1}
+                                                type={isDownloadConfirmVisible ? 'primary' : 'default'}
                                                 onClick={() => {
-                                                    saveAsPDF()
+                                                    if (isDownloadConfirmVisible) {
+                                                        setIsDownloadConfirmVisible(false)
+                                                        saveAsPDF()
+                                                    } else {
+                                                        setIsDownloadConfirmVisible(true)
+                                                        setTimeout(() => {
+                                                            setIsDownloadConfirmVisible(false)
+                                                        }, 2000)
+                                                    }
                                                 }}
                                                 icon={
                                                     progressPercent === -1 ?
-                                                        <DownloadOutlined style={{ 'color': 'gray' }} />
+                                                        <DownloadOutlined style={{ 'color': isDownloadConfirmVisible ? 'black' : 'gray' }} />
                                                         :
                                                         <Progress type='circle' percent={progressPercent} size={14} />
                                                 }
@@ -527,7 +545,7 @@ function DesktopPaper() {
                                 <Row justify='center' align='middle' style={{ 'width': '100%' }} >
                                     <Space.Compact>
 
-                                        <Button shape='circle' icon={<LeftOutlined />} disabled={imagePageNumber === imagePageNumberStart} onClick={() => {
+                                        <Button shape='circle' icon={<LeftOutlined />} disabled={isPrintingPage || imagePageNumber === imagePageNumberStart} onClick={() => {
                                             const newImagePageNumber = imagePageNumber - 1
                                             setImagePageNumber(newImagePageNumber)
 
@@ -539,7 +557,7 @@ function DesktopPaper() {
                                             </Button>
                                         </Row>
 
-                                        <Button shape='circle' icon={<RightOutlined />} disabled={imagePageNumber === imagePageNumberEnd} onClick={() => {
+                                        <Button shape='circle' icon={<RightOutlined />} disabled={isPrintingPage || imagePageNumber === imagePageNumberEnd} onClick={() => {
                                             const newImagePageNumber = imagePageNumber + 1
                                             setImagePageNumber(newImagePageNumber)
 

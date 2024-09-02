@@ -151,9 +151,10 @@ function MobilePaper() {
 
                         setTimeout(() => {
                             setProgressPercent(-1)
+                            setImagePageNumber(lastImagePageNumber)
                         }, 2000)
 
-                        setImagePageNumber(lastImagePageNumber)
+
                     }
                 })
         })
