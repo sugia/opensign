@@ -33,7 +33,7 @@ export const initialState = {
     nameInitials: localStorage.getItem('nameInitials') || '',
 
     
-    mobileSignatureCanvasWidth: 500,
+    mobileSignatureCanvasWidth: 400,
     mobileSignatureCanvasHeight: 200,
     mobileSignature: localStorage.getItem('mobileSignature') || '',
     mobilePrintedName: localStorage.getItem('mobilePrintedName') || '',

@@ -53,14 +53,16 @@ function MobileDrawingPad() {
             // console.log(key)
         }}>
             <Tabs.Tab title='Text Box' key='Text Box'>
-
+                <p style={{'fontSize': '16px'}}>
+                    Long press on the PDF file to insert a text box.
+                </p>
             </Tabs.Tab>
 
             <Tabs.Tab title='Signature' key='Signature'>
                 <>
                     <Row justify='space-between' align='middle'>
                         <Col>
-                            <p>
+                            <p >
                                 Signature
                             </p>
                         </Col>
@@ -86,7 +88,7 @@ function MobileDrawingPad() {
                     <Row justify='center'
                         style={{
                             'borderRadius': '16px', 'boxShadow': "5px 8px 24px 5px rgba(208, 216, 243, 0.4)",
-                            'margin': '10px 0px'
+                            'margin': '10px 0px 0px 0px'
                         }}>
                         <SignatureCanvas ref={signatureRef} penColor='blue' canvasProps={{
                             width: state.mobileSignatureCanvasWidth,

@@ -1,16 +1,39 @@
 import {
+    Typography,
+    Layout,
     Row,
+    Col,
+    Affix,
+    Image,
+    Button,
+    Tooltip,
+    Popover,
+    Divider,
     Input,
+    Space,
+    Progress,
+    Segmented,
+    Modal,
+    Upload,
+    Empty,
+    Spin,
 } from 'antd'
 
 import {
-    Button,
-    Space,
-} from 'antd-mobile'
-
-import {
-    CloseOutline,
-} from 'antd-mobile-icons'
+    DownloadOutlined,
+    CloseOutlined,
+    LeftOutlined,
+    RightOutlined,
+    EditOutlined,
+    HomeOutlined,
+    DeleteOutlined,
+    UploadOutlined,
+    BulbOutlined,
+    AlertOutlined,
+    FolderOpenOutlined,
+    PlusOutlined,
+    InboxOutlined,
+} from '@ant-design/icons'
 
 import {
     useContext,
@@ -65,13 +88,12 @@ function MobileDraggableText(props) {
             }}
         >
             <Row justify='start' ref={nodeRef}>
-                <Space
+                <Space.Compact
                     onTouchStart={() => {
                         setIsFocused(true)
                         inputRef.current?.focus({
                             cursor: 'end',
                         })
-                        console.log('focused')
                     }}
                     onBlur={() => {
                         setIsFocused(false)
@@ -101,7 +123,10 @@ function MobileDraggableText(props) {
                     />
 
                     <Button
-                        color={isDeleteConfirmVisible? 'danger' : 'default'}
+                        danger={isDeleteConfirmVisible ? true : false}
+                        type={isDeleteConfirmVisible ? 'primary' : 'default'}
+                        size='small'
+                        icon={<CloseOutlined />}
                         onClick={() => {
                             if (isDeleteConfirmVisible) {
                                 setIsDeleteConfirmVisible(false)
@@ -117,10 +142,8 @@ function MobileDraggableText(props) {
                             }
                         }}
                         style={{ 'visibility': isFocused ? 'visible' : 'hidden' }}
-                    >
-                        <CloseOutline />
-                    </Button>
-                </Space>
+                    />
+                </Space.Compact>
             </Row>
         </Draggable>
     )
