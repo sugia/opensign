@@ -59,45 +59,41 @@ import html2canvas from 'html2canvas'
 
 import jsPDF from 'jspdf'
 
-import SignatureCanvas from 'react-signature-canvas'
-
-import {
-    Rnd,
-} from 'react-rnd'
-
 import * as PDFJS from 'pdfjs-dist/webpack'
 
-import DraggableText from './DraggableText'
-import DraggableImage from './DraggableImage'
+import MobileDraggableText from './MobileDraggableText'
+import MobileDraggableImage from './MobileDraggableImage'
+import MobileDrawingPad from './MobileDrawingPad'
 
 
 function MobilePaper() {
     const { state, dispatch } = useContext(Context)
     const navigate = useNavigate()
 
-
-    const [paperName, setPaperName] = useState('')
+    const [PDFImages, setPDFImages] = useState([])
+    const [PDFName, setPDFName] = useState('')
     const [imagePageNumber, setImagePageNumber] = useState(1)
-    const [imagePageNumberStart, setImagePageNumberStart] = useState(1)
-    const [imagePageNumberEnd, setImagePageNumberEnd] = useState(1)
 
 
+    const imagePageNumberStart = 1
+    const imagePageNumberEnd = useMemo(() => {
+        return PDFImages.length
+    }, [PDFImages.length])
 
-    const cookieKey = useMemo(() => {
-        return `mobile_draggableComponentList_${paperName}_${imagePageNumber}`
-    }, [paperName, imagePageNumber])
+
+    const localStorageKey = useMemo(() => {
+        return `mobileDraggableComponentList_${PDFName}_${imagePageNumber}`
+    }, [PDFName, imagePageNumber])
 
     const [draggableComponentList, setDraggableComponentList] = useState([])
 
     const [rerenderListCompletely, setRerenderListCompletely] = useState(true)
 
     useEffect(() => {
-        // console.log(localStorage.getItem(cookieKey))
-        setDraggableComponentList(JSON.parse(localStorage.getItem(cookieKey)) || [])
+        setDraggableComponentList(JSON.parse(localStorage.getItem(localStorageKey)) || [])
         setRerenderListCompletely(false)
 
-        // console.log(getCookie(cookieKey))
-    }, [cookieKey])
+    }, [localStorageKey])
 
     useEffect(() => {
         if (!rerenderListCompletely) {
@@ -109,14 +105,8 @@ function MobilePaper() {
 
     const [pdf, setPdf] = useState(new jsPDF('p', 'mm', 'a4'))
 
-    const printRef = useRef()
-    // const signatureRef = useRef()
 
-    const signatureRef = useCallback((node) => {
-        const tmp = localStorage.getItem('mobile_signature')
-        node?.fromDataURL(tmp, { width: signatureCanvasWidth, height: signatureCanvasHeight })
-        setRerenderListCompletely(false)
-    }, [])
+    const printRef = useRef()
 
     const sleep = (ms) => {
         return new Promise(resolve => setTimeout(resolve, ms))
@@ -179,18 +169,12 @@ function MobilePaper() {
 
     }
 
-    const [segmentedValue, setSegmentedValue] = useState('Text Box')
-    const [signature, setSignature] = useState(localStorage.getItem('mobile_signature') || '')
-    const [printedName, setPrintedName] = useState(localStorage.getItem('mobile_printedName') || '')
-    const [nameInitials, setNameInitials] = useState(localStorage.getItem('mobile_nameInitials') || '')
 
-    const [PDFImages, setPDFImages] = useState(JSON.parse(localStorage.getItem('mobile_PDFImages')) || [])
 
-    const signatureCanvasWidth = 500
-    const signatureCanvasHeight = 200
-
-    const [signatureWidth, setSignatureWidth] = useState(localStorage.getItem('mobile_signatureWidth') || signatureCanvasWidth)
-    const [signatureHeight, setSignatureHeight] = useState(localStorage.getItem('mobile_signatureHeight') || signatureCanvasHeight)
+    const [signatureWidth, setSignatureWidth] = useState(
+        localStorage.getItem('mobileSignatureWidth') || state.mobileSignatureCanvasWidth)
+    const [signatureHeight, setSignatureHeight] = useState(
+        localStorage.getItem('mobileSignatureHeight') || state.mobileSignatureCanvasHeight)
 
     const [isLoadingPDF, setIsLoadingPDF] = useState(false)
 
@@ -229,9 +213,7 @@ function MobilePaper() {
         }
         canvas.remove();
 
-        // console.log(images)
         setImagePageNumber(1)
-        setImagePageNumberEnd(images.length)
 
         setIsLoadingPDF(false)
         return images;
@@ -245,7 +227,7 @@ function MobilePaper() {
             .then((images) => {
                 setPDFImages(images)
                 setRerenderListCompletely(false)
-                setPaperName(file.name)
+                setPDFName(file.name.replace(/\.[^/.]+$/, ""))
             })
     }
 
@@ -254,26 +236,16 @@ function MobilePaper() {
     }, [imagePageNumber, rerenderListCompletely])
 
 
-    const segmentedOptions = useMemo(() => {
-        const res = ['Text Box']
-        if (signature) {
-            res.push('Signature')
-        }
-        if (printedName) {
-            res.push('Printed Name')
-        }
-        if (nameInitials) {
-            res.push('Name Initials')
-        }
-        return res
-    }, [signature, printedName, nameInitials])
+    let longTouchTimer
+    // console.log(draggableComponentList)
+
     return (
         <Layout>
             <Affix offsetTop={0}>
                 <Layout.Header style={{ 'background': 'white', 'height': '70px', 'padding': '0px' }}>
                     <Row justify='center' align='top' style={{ 'backgroundColor': 'white', 'height': '100%' }}>
                         <Row justify='space-between' align='top' style={{ 'width': '100%', 'height': '100%', 'backgroundColor': 'white' }}>
-                            <Col span={2}>
+                            <Col offset={1} span={2}>
                                 <Image preview={false} src={state.appLogo} style={{ 'width': '30px', 'height': '30px' }}></Image>
                             </Col>
                             <Col span={4}>
@@ -281,11 +253,11 @@ function MobilePaper() {
                             </Col>
 
 
-                            <Col offset={2} span={8} style={{ 'visibility': PDFImages.length === 0 ? 'hidden' : 'visible' }}>
+                            <Col offset={1} span={8} style={{ 'visibility': PDFImages.length === 0 ? 'hidden' : 'visible' }}>
                                 <Button shape='round' style={{ 'marginTop': '20px' }} onClick={() => {
                                     setIsToolsVisible(true)
                                 }}>
-                                    {segmentedValue}
+                                    {state.mobileSegmentedValue}
                                 </Button>
 
                                 <Popup
@@ -298,100 +270,11 @@ function MobilePaper() {
                                     }}
                                     bodyStyle={{ 'height': '40vh' }}
                                 >
-                                    <>
 
-                                        <Tabs activeKey={segmentedValue} onChange={(key) => {
-                                            setSegmentedValue(key)
-                                        }}>
-                                            <Tabs.Tab title='Text Box' key='Text Box'>
-
-                                            </Tabs.Tab>
-
-                                            <Tabs.Tab title='Signature' key='Signature'>
-                                                <>
-                                                    <Row justify='space-between' align='middle'>
-                                                        <Col>
-                                                            <Typography>
-                                                                Signature
-                                                            </Typography>
-                                                        </Col>
-                                                        <Col>
-                                                            <Button type='text' onClick={() => {
-                                                                signatureRef?.current?.clear()
-                                                                localStorage.removeItem('mobile_signature')
-                                                                setSignature('')
-                                                            }}
-                                                                icon={<DeleteOutlined />}
-                                                            >
-                                                                Clear Signature
-                                                            </Button>
-                                                        </Col>
-                                                    </Row>
-
-                                                    <Row justify='center'
-                                                        style={{
-                                                            'borderRadius': '16px', 'boxShadow': "5px 8px 24px 5px rgba(208, 216, 243, 0.4)",
-                                                            'margin': '10px 0px'
-                                                        }}>
-                                                        <SignatureCanvas ref={signatureRef} penColor='blue' canvasProps={{
-                                                            width: signatureCanvasWidth, height: signatureCanvasHeight
-                                                        }}
-
-                                                            onEnd={() => {
-                                                                const tmp = signatureRef.current.getCanvas().toDataURL('image/png')
-                                                                setSignature(tmp)
-                                                                localStorage.setItem('mobile_signature', tmp)
-                                                            }}
-                                                        />
-                                                    </Row>
-                                                </>
-                                            </Tabs.Tab>
-
-                                            <Tabs.Tab title='Printed Name' key='Printed Name'>
-                                                <Row justify='start' style={{ 'margin': '10px 0px' }}>
-
-                                                    <Input addonBefore={
-                                                        <Row style={{ 'width': '100px' }}>
-                                                            <Typography>Printed Name:</Typography>
-                                                        </Row>
-                                                    } value={printedName} placeholder='Open Sign' onChange={(e) => {
-                                                        setPrintedName(e.target.value)
-                                                        localStorage.setItem('mobile_printedName', e.target.value)
-                                                    }}
-
-                                                    />
-
-                                                </Row>
-                                            </Tabs.Tab>
-
-                                            <Tabs.Tab title='Name Initials' key='Name Initials'>
-                                                <Row justify='start' style={{ 'margin': '10px 0px' }}>
-                                                    <Input addonBefore={
-                                                        <Row style={{ 'width': '100px' }}>
-                                                            <Typography>Name Initials:</Typography>
-                                                        </Row>
-                                                    } value={nameInitials} placeholder='OS' onChange={(e) => {
-                                                        setNameInitials(e.target.value)
-                                                        localStorage.setItem('mobile_nameInitials', e.target.value)
-                                                    }}
-
-                                                    />
-                                                </Row>
-                                            </Tabs.Tab>
-                                        </Tabs>
+                                    <MobileDrawingPad />
 
 
-
-
-
-
-
-
-
-                                    </>
                                 </Popup>
-
-
 
                             </Col>
 
@@ -483,7 +366,7 @@ function MobilePaper() {
                                         draggableComponentList?.map((item, idx) => {
                                             if (item.type === 'image') {
                                                 return (
-                                                    <DraggableImage
+                                                    <MobileDraggableImage
                                                         key={idx}
                                                         content={item.content || ''}
                                                         x={item.x}
@@ -496,7 +379,7 @@ function MobilePaper() {
                                                             newList[idx]['y'] = y
 
                                                             setDraggableComponentList(newList)
-                                                            localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                                            localStorage.setItem([localStorageKey], JSON.stringify(newList))
 
 
                                                         }}
@@ -506,12 +389,12 @@ function MobilePaper() {
                                                             newList[idx]['height'] = height
 
                                                             setDraggableComponentList(newList)
-                                                            localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                                            localStorage.setItem([localStorageKey], JSON.stringify(newList))
 
                                                             setSignatureWidth(width)
                                                             setSignatureHeight(height)
-                                                            localStorage.setItem('mobile_signatureWidth', width)
-                                                            localStorage.setItem('mobile_signatureHeight', height)
+                                                            localStorage.setItem('mobileSignatureWidth', width)
+                                                            localStorage.setItem('mobileSignatureHeight', height)
                                                         }}
                                                         deleteItem={() => {
                                                             const newList = [
@@ -519,7 +402,7 @@ function MobilePaper() {
                                                                 ...draggableComponentList.slice(idx + 1),
                                                             ]
                                                             setDraggableComponentList(newList)
-                                                            localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                                            localStorage.setItem([localStorageKey], JSON.stringify(newList))
                                                             setRerenderListCompletely(false)
 
                                                         }}
@@ -527,7 +410,7 @@ function MobilePaper() {
                                                 )
                                             } else {
                                                 return (
-                                                    <DraggableText
+                                                    <MobileDraggableText
                                                         key={idx}
                                                         content={item.content || ''}
                                                         x={item.x}
@@ -537,7 +420,7 @@ function MobilePaper() {
                                                             newList[idx]['content'] = content
 
                                                             setDraggableComponentList(newList)
-                                                            localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                                            localStorage.setItem([localStorageKey], JSON.stringify(newList))
 
 
                                                         }}
@@ -547,7 +430,7 @@ function MobilePaper() {
                                                             newList[idx]['y'] = y
 
                                                             setDraggableComponentList(newList)
-                                                            localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                                            localStorage.setItem([localStorageKey], JSON.stringify(newList))
 
 
                                                         }}
@@ -558,7 +441,7 @@ function MobilePaper() {
                                                                 ...draggableComponentList.slice(idx + 1),
                                                             ]
                                                             setDraggableComponentList(newList)
-                                                            localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                                            localStorage.setItem([localStorageKey], JSON.stringify(newList))
                                                             setRerenderListCompletely(false)
                                                         }}
                                                     />
@@ -571,38 +454,39 @@ function MobilePaper() {
                                 <Image id='imageRef' src={imageURL}
                                     preview={false}
                                     style={{ 'maxWidth': '100vw', 'maxHeight': '85vh', 'zIndex': 0 }}
-                                    onMouseDown={(e) => {
-                                        if (e.ctrlKey) {
+                                    onTouchStart={(e) => {
+                                        // console.log(e)
+                                        longTouchTimer = setTimeout(() => {
                                             const newItem =
-                                                segmentedValue === 'Signature' ?
+                                                state.mobileSegmentedValue === 'Signature' ?
                                                     {
                                                         'type': 'image',
-                                                        'content': signature,
-                                                        'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
-                                                        'y': e.clientY - 80, // header height
+                                                        'content': state.mobileSignature,
+                                                        'x': e.touches[0].screenX - window.innerWidth * 2 - 10, // Row justify='center'
+                                                        'y': e.touches[0].clientY - 80, // header height
                                                         'width': signatureWidth,
                                                         'height': signatureHeight,
                                                     }
-                                                    : segmentedValue === 'Printed Name' ?
+                                                    : state.mobileSegmentedValue === 'Printed Name' ?
                                                         {
                                                             'type': 'text',
-                                                            'content': printedName,
-                                                            'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
-                                                            'y': e.clientY - 80, // header height
+                                                            'content': state.mobilePrintedName,
+                                                            'x': e.touches[0].clientX - window.innerWidth - 10, // Row justify='center'
+                                                            'y': e.touches[0].clientY - 80, // header height
                                                         }
-                                                        : segmentedValue === 'Name Initials' ?
+                                                        : state.mobileSegmentedValue === 'Name Initials' ?
                                                             {
                                                                 'type': 'text',
-                                                                'content': nameInitials,
-                                                                'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
-                                                                'y': e.clientY - 80, // header height
+                                                                'content': state.mobileNameInitials,
+                                                                'x': e.touches[0].clientX - window.innerWidth / 2 - 10, // Row justify='center'
+                                                                'y': e.touches[0].clientY - 80, // header height
                                                             }
                                                             :
                                                             {
                                                                 'type': 'text',
                                                                 'content': '',
-                                                                'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
-                                                                'y': e.clientY - 80, // header height
+                                                                'x': e.touches[0].clientX - window.innerWidth / 2 - 10, // Row justify='center'
+                                                                'y': e.touches[0].clientY - 80, // header height
                                                             }
 
                                             const newList = [
@@ -612,8 +496,14 @@ function MobilePaper() {
 
                                             // console.log(signature)
                                             setDraggableComponentList(newList)
-                                            localStorage.setItem([cookieKey], JSON.stringify(newList))
+                                            localStorage.setItem([localStorageKey], JSON.stringify(newList))
 
+                                        }, 500)
+
+                                    }}
+                                    onTouchEnd={() => {
+                                        if (longTouchTimer) {
+                                            clearTimeout(longTouchTimer)
                                         }
                                     }}
                                 />
@@ -623,7 +513,7 @@ function MobilePaper() {
                 }
 
                 {!isLoadingPDF && PDFImages.length > 0 &&
-                    <Row justify='center' align='middle' style={{ 'width': '100%' }} >
+                    <Row justify='center' align='middle' style={{ 'width': '100%', 'position': 'absolute', 'bottom': '40px' }} >
                         <Space.Compact>
 
                             <Button shape='circle' icon={<LeftOutlined />} disabled={imagePageNumber === imagePageNumberStart} onClick={() => {

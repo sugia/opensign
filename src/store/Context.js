@@ -31,6 +31,16 @@ export const initialState = {
     signature: localStorage.getItem('signature') || '',
     printedName: localStorage.getItem('printedName') || '',
     nameInitials: localStorage.getItem('nameInitials') || '',
+
+    
+    mobileSignatureCanvasWidth: 500,
+    mobileSignatureCanvasHeight: 200,
+    mobileSignature: localStorage.getItem('mobileSignature') || '',
+    mobilePrintedName: localStorage.getItem('mobilePrintedName') || '',
+    mobileNameInitials: localStorage.getItem('mobileNameInitials') || '',
+
+    mobileSegmentedValue: 'Text Box',
+
 }
 
 

@@ -64,7 +64,7 @@ function DesktopPaper() {
     const { state, dispatch } = useContext(Context)
     const navigate = useNavigate()
 
-    const [PDFImages, setPDFImages] = useState(JSON.parse(localStorage.getItem('PDFImages')) || [])
+    const [PDFImages, setPDFImages] = useState([])
 
 
     const [PDFName, setPDFName] = useState('')
