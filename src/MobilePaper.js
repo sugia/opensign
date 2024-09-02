@@ -253,66 +253,69 @@ function MobilePaper() {
                             </Col>
 
 
-                            <Col offset={1} span={8} style={{ 'visibility': PDFImages.length === 0 ? 'hidden' : 'visible' }}>
-                                <Button shape='round' style={{ 'marginTop': '20px' }} onClick={() => {
-                                    setIsToolsVisible(true)
-                                }}>
-                                    {state.mobileSegmentedValue}
-                                </Button>
+                            <Col span={10} style={{ 'visibility': PDFImages.length === 0 ? 'hidden' : 'visible' }}>
+                                <Row justify='center'>
+                                    <Button shape='round' style={{ 'marginTop': '20px', 'color': 'gray' }} onClick={() => {
+                                        setIsToolsVisible(true)
+                                    }}>
+                                        {state.mobileSegmentedValue}
+                                    </Button>
 
-                                <Popup
-                                    visible={isToolsVisible}
-                                    onMaskClick={() => {
-                                        setIsToolsVisible(false)
-                                    }}
-                                    onClose={() => {
-                                        setIsToolsVisible(false)
-                                    }}
-                                    bodyStyle={{ 'height': '40vh' }}
-                                >
+                                    <Popup
+                                        visible={isToolsVisible}
+                                        onMaskClick={() => {
+                                            setIsToolsVisible(false)
+                                        }}
+                                        onClose={() => {
+                                            setIsToolsVisible(false)
+                                        }}
+                                        bodyStyle={{ 'height': '40vh' }}
+                                    >
 
-                                    <MobileDrawingPad />
+                                        <MobileDrawingPad />
 
 
-                                </Popup>
+                                    </Popup>
+
+                                </Row>
 
                             </Col>
 
-                            <Col span={8} style={{ 'visibility': PDFImages.length === 0 ? 'hidden' : 'visible' }}>
+                            <Col span={7} style={{ 'visibility': PDFImages.length === 0 ? 'hidden' : 'visible' }}>
                                 <Row justify='center' style={{ 'marginTop': '20px' }} >
                                     <Space.Compact>
-                                        <Popover content={<Typography>Open PDF</Typography>}>
-                                            <Upload accept='.pdf' showUploadList={false} onChange={(info) => {
-                                                openPDF(info.file.originFileObj)
-                                            }}>
-                                                <Button shape='round' size='medium'
-                                                    disabled={progressPercent !== -1}
-                                                    onClick={() => {
-                                                    }}
-                                                    icon={
-                                                        <FolderOpenOutlined style={{ 'color': 'gray' }} />
-                                                    }
-                                                >
-                                                </Button>
-                                            </Upload>
-                                        </Popover>
 
-                                        <Popover content={<Typography>Download PDF</Typography>}>
+                                        <Upload accept='.pdf' showUploadList={false} onChange={(info) => {
+                                            openPDF(info.file.originFileObj)
+                                        }}>
                                             <Button shape='round' size='medium'
                                                 disabled={progressPercent !== -1}
                                                 onClick={() => {
-                                                    saveAsPDF()
                                                 }}
                                                 icon={
-                                                    progressPercent === -1 ?
-                                                        <DownloadOutlined style={{ 'color': 'gray' }} />
-                                                        :
-                                                        <Progress type='circle' percent={progressPercent} size={14} />
+                                                    <FolderOpenOutlined style={{ 'color': 'gray' }} />
                                                 }
                                             >
-
                                             </Button>
-                                        </Popover>
+                                        </Upload>
+
+
+
+                                        <Button shape='round' size='medium'
+                                            disabled={progressPercent !== -1}
+                                            onClick={() => {
+                                                saveAsPDF()
+                                            }}
+                                            icon={
+                                                progressPercent === -1 ?
+                                                    <DownloadOutlined style={{ 'color': 'gray' }} />
+                                                    :
+                                                    <Progress type='circle' percent={progressPercent} size={14} />
+                                            }
+                                        >
+
+                                        </Button>
+
                                     </Space.Compact>
                                 </Row>
                             </Col>
