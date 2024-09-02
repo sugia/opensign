@@ -462,7 +462,7 @@ function MobilePaper() {
                                                     {
                                                         'type': 'image',
                                                         'content': state.mobileSignature,
-                                                        'x': e.touches[0].screenX - window.innerWidth * 2 - 10, // Row justify='center'
+                                                        'x': e.touches[0].screenX - window.innerWidth / 2 - 10, // Row justify='center'
                                                         'y': e.touches[0].clientY - 80, // header height
                                                         'width': signatureWidth,
                                                         'height': signatureHeight,
@@ -471,7 +471,7 @@ function MobilePaper() {
                                                         {
                                                             'type': 'text',
                                                             'content': state.mobilePrintedName,
-                                                            'x': e.touches[0].clientX - window.innerWidth - 10, // Row justify='center'
+                                                            'x': e.touches[0].clientX - window.innerWidth / 2 - 10, // Row justify='center'
                                                             'y': e.touches[0].clientY - 80, // header height
                                                         }
                                                         : state.mobileSegmentedValue === 'Name Initials' ?
