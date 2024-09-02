@@ -114,6 +114,8 @@ function MobilePaper() {
 
     const [progressPercent, setProgressPercent] = useState(-1)
 
+    const [lastImagePageNumber, setLastImagePageNumber] = useState(1)
+
     useEffect(() => {
         if (!isPrintingPage) {
             return
@@ -144,12 +146,14 @@ function MobilePaper() {
                     } else {
                         setProgressPercent(100)
 
-                        pdf.save('download.pdf');
+                        pdf.save(`${PDFName}_OpenSign.pdf`)
                         setIsPrintingPage(false)
 
                         setTimeout(() => {
                             setProgressPercent(-1)
                         }, 2000)
+
+                        setImagePageNumber(lastImagePageNumber)
                     }
                 })
         })
@@ -159,14 +163,13 @@ function MobilePaper() {
 
 
     const saveAsPDF = async () => {
+        setLastImagePageNumber(imagePageNumber)
+
         setPdf(new jsPDF('p', 'mm', 'a4'))
 
-        setIsPrintingPage(true)
-        setImagePageNumber(imagePageNumberStart)
-
         setProgressPercent(0)
-
-
+        setImagePageNumber(imagePageNumberStart)
+        setIsPrintingPage(true)
     }
 
 
@@ -180,6 +183,7 @@ function MobilePaper() {
 
 
     const [isToolsVisible, setIsToolsVisible] = useState(false)
+
 
     const readFileData = (file) => {
         return new Promise((resolve, reject) => {
@@ -239,8 +243,10 @@ function MobilePaper() {
     let longTouchTimer
     // console.log(draggableComponentList)
 
+    const [isDownloadConfirmVisible, setIsDownloadConfirmVisible] = useState(false)
+
     return (
-        <Layout>
+        <Layout style={{ 'width': '100vw', 'height': '100vh', 'overflow': 'hidden' }}>
             <Affix offsetTop={0}>
                 <Layout.Header style={{ 'background': 'white', 'height': '70px', 'padding': '0px' }}>
                     <Row justify='center' align='top' style={{ 'backgroundColor': 'white', 'height': '100%' }}>
@@ -302,13 +308,25 @@ function MobilePaper() {
 
 
                                         <Button shape='round' size='medium'
+                                            style={{
+                                                'backgroundColor': isDownloadConfirmVisible ? 'lawnGreen' : 'white'
+                                            }}
+                                            type={isDownloadConfirmVisible ? 'primary' : 'default'}
                                             disabled={progressPercent !== -1}
                                             onClick={() => {
-                                                saveAsPDF()
+                                                if (isDownloadConfirmVisible) {
+                                                    setIsDownloadConfirmVisible(false)
+                                                    saveAsPDF()
+                                                } else {
+                                                    setIsDownloadConfirmVisible(true)
+                                                    setTimeout(() => {
+                                                        setIsDownloadConfirmVisible(false)
+                                                    }, 2000)
+                                                }
                                             }}
                                             icon={
                                                 progressPercent === -1 ?
-                                                    <DownloadOutlined style={{ 'color': 'gray' }} />
+                                                    <DownloadOutlined style={{ 'color': isDownloadConfirmVisible ? 'black' : 'gray' }} />
                                                     :
                                                     <Progress type='circle' percent={progressPercent} size={14} />
                                             }
@@ -457,6 +475,50 @@ function MobilePaper() {
                                 <Image id='imageRef' src={imageURL}
                                     preview={false}
                                     style={{ 'maxWidth': '100vw', 'maxHeight': '85vh', 'zIndex': 0 }}
+                                    /*
+                                    onClick={(e) => {
+                                        const newItem =
+                                            state.mobileSegmentedValue === 'Signature' ?
+                                                {
+                                                    'type': 'image',
+                                                    'content': state.mobileSignature,
+                                                    'x': e.screenX - window.innerWidth / 2 - 10, // Row justify='center'
+                                                    'y': e.clientY - 80, // header height
+                                                    'width': signatureWidth,
+                                                    'height': signatureHeight,
+                                                }
+                                                : state.mobileSegmentedValue === 'Printed Name' ?
+                                                    {
+                                                        'type': 'text',
+                                                        'content': state.mobilePrintedName,
+                                                        'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
+                                                        'y': e.clientY - 80, // header height
+                                                    }
+                                                    : state.mobileSegmentedValue === 'Name Initials' ?
+                                                        {
+                                                            'type': 'text',
+                                                            'content': state.mobileNameInitials,
+                                                            'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
+                                                            'y': e.clientY - 80, // header height
+                                                        }
+                                                        :
+                                                        {
+                                                            'type': 'text',
+                                                            'content': '',
+                                                            'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
+                                                            'y': e.clientY - 80, // header height
+                                                        }
+
+                                        const newList = [
+                                            ...draggableComponentList,
+                                            newItem,
+                                        ]
+
+                                        setDraggableComponentList(newList)
+                                        localStorage.setItem([localStorageKey], JSON.stringify(newList))
+                                    }}
+                                    */
+
                                     onTouchStart={(e) => {
                                         // console.log(e)
                                         longTouchTimer = setTimeout(() => {
@@ -501,7 +563,7 @@ function MobilePaper() {
                                             setDraggableComponentList(newList)
                                             localStorage.setItem([localStorageKey], JSON.stringify(newList))
 
-                                        }, 500)
+                                        }, 100)
 
                                     }}
                                     onTouchEnd={() => {
@@ -509,6 +571,7 @@ function MobilePaper() {
                                             clearTimeout(longTouchTimer)
                                         }
                                     }}
+
                                 />
                             </Row>
                         </Col>
@@ -519,7 +582,7 @@ function MobilePaper() {
                     <Row justify='center' align='middle' style={{ 'width': '100%', 'position': 'absolute', 'bottom': '40px' }} >
                         <Space.Compact>
 
-                            <Button shape='circle' icon={<LeftOutlined />} disabled={imagePageNumber === imagePageNumberStart} onClick={() => {
+                            <Button shape='circle' icon={<LeftOutlined />} disabled={isPrintingPage || imagePageNumber === imagePageNumberStart} onClick={() => {
                                 const newImagePageNumber = imagePageNumber - 1
                                 setImagePageNumber(newImagePageNumber)
 
@@ -531,7 +594,7 @@ function MobilePaper() {
                                 </Button>
                             </Row>
 
-                            <Button shape='circle' icon={<RightOutlined />} disabled={imagePageNumber === imagePageNumberEnd} onClick={() => {
+                            <Button shape='circle' icon={<RightOutlined />} disabled={isPrintingPage || imagePageNumber === imagePageNumberEnd} onClick={() => {
                                 const newImagePageNumber = imagePageNumber + 1
                                 setImagePageNumber(newImagePageNumber)
 

@@ -75,7 +75,7 @@ function MobileDraggableImage(props) {
 
     return (
         <Space.Compact
-            style={{ 'display': 'flex', 'position': 'fixed' }}
+            style={{ 'display': 'flex', 'position': 'fixed', 'zIndex': isFocused ? 2 : 1 }}
             onTouchStart={() => {
                 setIsFocused(true)
             }}

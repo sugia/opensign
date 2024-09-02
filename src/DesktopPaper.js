@@ -137,7 +137,7 @@ function DesktopPaper() {
                     } else {
                         setProgressPercent(100)
 
-                        pdf.save(`${PDFName}_OpenSign.pdf`);
+                        pdf.save(`${PDFName}_OpenSign.pdf`)
                         setIsPrintingPage(false)
 
                         setTimeout(() => {

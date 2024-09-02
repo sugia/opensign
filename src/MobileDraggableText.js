@@ -99,7 +99,7 @@ function MobileDraggableText(props) {
                         setIsFocused(false)
                         inputRef.current?.blur()
                     }}
-                    style={{ 'display': 'flex', 'position': 'fixed' }}
+                    style={{ 'display': 'flex', 'position': 'fixed', 'zIndex': isFocused ? 2 : 1 }}
                 >
                     <Input
                         ref={inputRef}
