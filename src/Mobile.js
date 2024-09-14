@@ -25,7 +25,7 @@ import { Context } from './store/Context'
 import { useNavigate } from 'react-router-dom'
 import MobileHeader from './MobileHeader'
 
-
+import MobileSectionList from './MobileSectionList'
 
 function Mobile() {
     const {state, dispatch} = useContext(Context)
@@ -68,40 +68,8 @@ function Mobile() {
                     </Row>
                 </Row>
 
-                {/* endorsement list 
-                <Row justify='center' align='top' style={{'height': '500px', 'padding': '70px 20px'}}>                
-                    <motion.div
-                            initial={{x: -300, opacity: 0}} 
-                            whileInView={{x: 0, opacity: 1, transition: {type: 'spring', bounce: 0, duration: 1}}} 
-                            viewport={{once: true}}>
-                        <Row justify='center'>
-                            <Typography.Title level={2}>
-                                {state.endorsementTitle}
-                            </Typography.Title>
-                        </Row>
-                        <Row justify='center'>
-                            <Typography style={{'fontSize': '16px'}}>
-                                {state.endorsementText}
-                            </Typography>
-                        </Row>
-                        <Row justify='space-between' style={{'marginTop': '50px'}}>
-                            {
-                                state.endorsementList.map((endorsementItem, index) => {
-                                    return (
-                                        <Col span={4}>
-                                            <Tooltip placement='top' title={endorsementItem.title} color={endorsementItem.titleColor}>
-                                                <a href={endorsementItem.URL} target='_blank' rel="noopener noreferrer">
-                                                    <Image height={50} preview={false} src={endorsementItem.image} style={{'boxShadow': '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)'}}></Image>
-                                                </a>
-                                            </Tooltip>
-                                        </Col>
-                                    )
-                                })
-                            }
-                        </Row>
-                    </motion.div>
-                </Row>
-                */}
+                {/* section list */}
+                <MobileSectionList sectionList={state.sectionList} />
 
 
                 {/* policies */}
