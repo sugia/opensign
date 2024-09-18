@@ -13,6 +13,22 @@ import opensign_four from '../images/opensign_four.webp'
 import opensign_five from '../images/opensign_five.webp'
 import opensign_six from '../images/opensign_six.webp'
 
+// endorsement images
+import amplichat_filled from '../images/amplichat.png'
+import dreamhub_filled from '../images/dreamhub_filled.png'
+import voiceqna_filled from '../images/voiceqna_fill_v2_gradient.png'
+import voicemirror_filled from '../images/voice_mirror_v_1024.png'
+
+import bazipaipai_filled from '../images/bazipaipai_64_filled.png'
+
+import spindrifthome_filled from '../images/sh_unfill_1024.png'
+
+import jomimi_filled from '../images/alpaca_logo_v3_filled_512.png'
+import mailgpt_filled from '../images/mailgpt_logo_512.webp'
+
+import paper_filled from '../images/paper_bird_512_filled.png'
+import realkit_filled from '../images/realkit_logo.webp'
+
 export const initialState = {
     // when in dev, change appURL to local url
     // appURL: 'http://localhost:3000',  
@@ -78,6 +94,71 @@ export const initialState = {
             'title': `Join the Open-Source Movement`,
             'text': `Empower your digital signature processes while supporting the open-source community. OpenSign’s collaborative and transparent approach ensures constant improvements and innovation, driven by its user base.`,
             'image': opensign_six,
+        },
+    ],
+
+    endorsementTitle: `Trusted by Innovative Startups`,
+    endorsementText: `OpenSign powers PDF signatures within AmpliChat, DreamHub, VoiceQnA, VoiceMirror, BaZiPaiPai, SpindriftHome, MailGPT, Jomimi, Paper, RealKit`,
+    endorsementList: [
+        {
+            title: `AmpliChat: Event Chat App`,
+            titleColor: `black`,
+            image: amplichat_filled,
+            URL: `https://amplichat.com`,
+        },
+        {
+            title: `DreamHub: Visualized Stories`,
+            titleColor: `black`,
+            image: dreamhub_filled,
+            URL: `https://dreamhub.app`,
+        },
+        {
+            title: `VoiceQnA: Speak a New Language`,
+            titleColor: `black`,
+            image: voiceqna_filled,
+            URL: `https://voiceqna.com`,
+        },
+        {
+            title: `VoiceMirror: Travel Translator`,
+            titleColor: `black`,
+            image: voicemirror_filled,
+            URL: `https://mirror.voiceqna.com`,
+        },
+        {
+            title: `BaZiPaiPai: Fate and Destiny`,
+            titleColor: `black`,
+            image: bazipaipai_filled,
+            URL: `https://bazipaipai.com`,
+        },
+        {
+            title: `SpindriftHome: HOA Management`,
+            titleColor: `black`,
+            image: spindrifthome_filled,
+            URL: `https://spindrifthome.com`,
+        },
+        {
+            title: `MailGPT: Email Writing Assistant`,
+            titleColor: `black`,
+            image: mailgpt_filled,
+            URL: `https://mail.jomimi.com`,
+        },
+        {
+            title: `Jomimi: App Development`,
+            titleColor: `black`,
+            image: jomimi_filled,
+            URL: `https://jomimi.com`,
+        },
+        {
+            title: `Paper: Academic Snapshots`,
+            titleColor: `black`,
+            image: paper_filled,
+            URL: `https://paper.jomimi.com`,
+        },
+        {
+            title: `RealKit: Real Estate Tools`,
+            titleColor: `black`,
+            image: realkit_filled,
+            URL: `https://realkit.jomimi.com`,
         },
     ],
 }

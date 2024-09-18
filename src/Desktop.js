@@ -12,7 +12,7 @@ import {
 } from 'antd'
 
 import {
-    DownloadOutlined,
+    GithubOutlined,
 } from '@ant-design/icons'
 
 
@@ -55,12 +55,22 @@ function Desktop() {
 
                             <Row justify='center' style={{ 'marginTop': '50px' }}>
                                 <Button type='primary' size='large' shape='round'
-                                    style={{ 'margin': '0px 5px' }}
+                                    style={{ 'margin': '0px 10px', 'width': '150px' }}
                                     onClick={() => {
                                         window.open(state.appURL + '/paper', '_self')
                                     }}>
                                     <Typography.Title level={5} style={{ 'color': 'white', 'marginTop': '7px' }}>
                                         Get Started
+                                    </Typography.Title>
+                                </Button>
+
+                                <Button type='primary' size='large' shape='round' icon={<GithubOutlined />}
+                                    style={{ 'margin': '0px 10px', 'color': 'white', 'backgroundColor': 'black', 'width': '150px' }}
+                                    onClick={() => {
+                                        window.open('https://github.com/sugia/opensign', '_blank')
+                                    }}>
+                                    <Typography.Title level={5} style={{ 'color': 'white', 'marginTop': '7px' }}>
+                                        Github
                                     </Typography.Title>
                                 </Button>
                             </Row>
@@ -76,6 +86,40 @@ function Desktop() {
 
                 {/* section list */}
                 <DesktopSectionList sectionList={state.sectionList} />
+
+                {/* endorsement list */}
+                <Row justify='center' align='middle' style={{'height': '700px', 'padding': '100px', 'backgroundColor': 'aliceblue'}}>
+                    <Row justify='center' style={{'maxWidth': '1000px'}}>
+                
+                        <Row justify='center' style={{'width': '100%'}}>
+                            <Typography.Title>
+                                {state.endorsementTitle}
+                            </Typography.Title>
+                        </Row>
+                        <Row justify='center' style={{'width': '750px'}}>
+                            <Typography style={{'fontSize': '16px'}}>
+                                {state.endorsementText}
+                            </Typography>
+                        </Row>
+
+                        <Row justify='center' style={{'marginTop': '50px', 'width': '100%'}}>
+                            {
+                                state.endorsementList.map((endorsementItem, index) => {
+                                    return (
+                                        <Col span={2} key={index}>
+                                            <Tooltip placement='top' title={endorsementItem.title} color={endorsementItem.titleColor}>
+                                            <a href={endorsementItem.URL} target='_blank' rel="noopener noreferrer">
+                                                <Image height={70} preview={false} src={endorsementItem.image} style={{'boxShadow': '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)'}}></Image>
+                                            </a>
+                                            </Tooltip>
+                                        </Col>
+                                    )
+                                })
+                            }
+                        </Row>
+                 
+                    </Row>
+                </Row>
 
                 {/* policies */}
                 <Row justify='center' align='middle' style={{ 'backgroundColor': 'white', 'height': '500px', 'padding': '100px' }}>

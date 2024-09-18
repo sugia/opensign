@@ -252,7 +252,7 @@ function MobilePaper() {
                 <Layout.Header style={{ 'background': 'white', 'height': '70px', 'padding': '0px' }}>
                     <Row justify='center' align='top' style={{ 'backgroundColor': 'white', 'height': '100%' }}>
                         <Row justify='space-between' align='top' style={{ 'width': '100%', 'height': '100%', 'backgroundColor': 'white' }}>
-                            <Col offset={1} span={2}>
+                            <Col offset={1} >
                                 <Image preview={false} src={state.appLogo} style={{ 'width': '30px', 'height': '30px' }}></Image>
                             </Col>
                             <Col span={4}>
