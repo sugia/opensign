@@ -72,7 +72,7 @@ function MobileSectionList(props) {
             {
                 props.sectionList.map((sectionItem, index) => {
                     return (
-                        <SectionItem sectionItem={sectionItem} backgroundColor={index % 2 === 1 ? 'white' : null} />
+                        <SectionItem sectionItem={sectionItem} backgroundColor={index % 2 === 1 ? 'white' : null} key={index} />
                     )
 
                 })

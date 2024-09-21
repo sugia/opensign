@@ -100,9 +100,9 @@ function DesktopSectionList(props) {
             props.sectionList.map((sectionItem, index) => {
                 return (
                     index % 2 === 0?
-                        <SectionItemImageOnTheLeft sectionItem={sectionItem} backgroundColor={null} />
+                        <SectionItemImageOnTheLeft sectionItem={sectionItem} backgroundColor={null} key={index} />
                         :
-                        <SectionItemImageOnTheRight sectionItem={sectionItem} backgroundColor={'white'} />
+                        <SectionItemImageOnTheRight sectionItem={sectionItem} backgroundColor={'white'} key={index} />
                 )
 
             })

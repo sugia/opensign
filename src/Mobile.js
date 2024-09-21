@@ -34,7 +34,7 @@ function Mobile() {
     const navigate = useNavigate()
 
     return (
-        <Layout style={{ 'overflow-x': 'hidden' }}>
+        <Layout style={{ 'overflowX': 'hidden' }}>
             <MobileHeader />
 
             <Layout.Content>
