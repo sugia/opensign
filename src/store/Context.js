@@ -5,6 +5,7 @@ import emailImage from '../images/email_256.webp'
 
 import opensign_logo from '../images/opensign_logo_512.png'
 import opensign_banner from '../images/digital_signature.jpg'
+import opensign_banner_v2 from '../images/opensign_banner_v2_512.webp'
 
 import opensign_one from '../images/opensign_one.webp'
 import opensign_two from '../images/opensign_two.webp'
@@ -41,7 +42,7 @@ export const initialState = {
     appName: 'OpenSign',
     coverTitle: 'The Open-Source Solution for Digital Signatures',
     coverText: 'OpenSign is a powerful, open-source platform that delivers a seamless and secure solution for digital signatures. Built to give businesses, organizations, and individuals complete control over their document signing processes, OpenSign offers customizable workflows, robust data privacy, and easy integration with your existing systems—all at no cost. Empower your digital document management with OpenSign, and join the open-source movement today.',
-    coverImage: opensign_banner,
+    coverImage: opensign_banner_v2,
 
     discordImage: discordImage,
     discordLink: 'https://discord.gg/AwRv3QZuKP',
