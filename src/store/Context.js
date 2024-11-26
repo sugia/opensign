@@ -55,6 +55,7 @@ export const initialState = {
     signature: localStorage.getItem('signature') || '',
     printedName: localStorage.getItem('printedName') || '',
     nameInitials: localStorage.getItem('nameInitials') || '',
+    date: new Date().toLocaleDateString(),
 
 
     mobileSignatureCanvasWidth: 400,
@@ -62,6 +63,7 @@ export const initialState = {
     mobileSignature: localStorage.getItem('mobileSignature') || '',
     mobilePrintedName: localStorage.getItem('mobilePrintedName') || '',
     mobileNameInitials: localStorage.getItem('mobileNameInitials') || '',
+    mobileDate: new Date().toLocaleDateString(),
 
     mobileSegmentedValue: 'Text Box',
 

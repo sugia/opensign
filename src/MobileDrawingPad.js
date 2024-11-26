@@ -146,6 +146,23 @@ function MobileDrawingPad() {
                     </Form>
                 </Row>
             </Tabs.Tab>
+
+            <Tabs.Tab title='Date' key='Date'>
+                <Row justify='start' style={{ 'margin': '10px 0px' }}>
+                    <Form layout='vertical' style={{'width': '100%'}}>
+                        <Form.Item label='Date' name='Date'>
+                            <Input value={state.mobileDate} defaultValue={state.mobileDate} onChange={(val) => {
+                                dispatch({
+                                    'value': {
+                                        'mobileDate': val,
+                                    }
+                                })
+                            }}
+                            />
+                        </Form.Item>
+                    </Form>
+                </Row>
+            </Tabs.Tab>
         </Tabs>
     )
 }

@@ -548,13 +548,20 @@ function MobilePaper() {
                                                                 'x': e.touches[0].clientX - window.innerWidth / 2 - 10, // Row justify='center'
                                                                 'y': e.touches[0].clientY - 80, // header height
                                                             }
-                                                            :
-                                                            {
-                                                                'type': 'text',
-                                                                'content': '',
-                                                                'x': e.touches[0].clientX - window.innerWidth / 2 - 10, // Row justify='center'
-                                                                'y': e.touches[0].clientY - 80, // header height
-                                                            }
+                                                            : state.mobileSegmentedValue === 'Date' ?
+                                                                {
+                                                                    'type': 'text',
+                                                                    'content': state.mobileDate,
+                                                                    'x': e.touches[0].clientX - window.innerWidth / 2 - 10, // Row justify='center'
+                                                                    'y': e.touches[0].clientY - 80, // header height
+                                                                }
+                                                                :
+                                                                {
+                                                                    'type': 'text',
+                                                                    'content': '',
+                                                                    'x': e.touches[0].clientX - window.innerWidth / 2 - 10, // Row justify='center'
+                                                                    'y': e.touches[0].clientY - 80, // header height
+                                                                }
 
                                             const newList = [
                                                 ...draggableComponentList,

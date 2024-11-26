@@ -242,8 +242,11 @@ function DesktopPaper() {
         if (state.nameInitials) {
             res.push('Name Initials')
         }
+        if (state.date) {
+            res.push('Date')
+        }
         return res
-    }, [state.signature, state.printedName, state.nameInitials, rerenderListCompletely])
+    }, [state.signature, state.printedName, state.nameInitials, state.date, rerenderListCompletely])
 
 
     const [isDownloadConfirmVisible, setIsDownloadConfirmVisible] = useState(false)
@@ -518,13 +521,20 @@ function DesktopPaper() {
                                                                             'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
                                                                             'y': e.clientY - 80, // header height
                                                                         }
-                                                                        :
-                                                                        {
-                                                                            'type': 'text',
-                                                                            'content': '',
-                                                                            'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
-                                                                            'y': e.clientY - 80, // header height
-                                                                        }
+                                                                        : segmentedValue === 'Date' ?
+                                                                            {
+                                                                                'type': 'text',
+                                                                                'content': state.date,
+                                                                                'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
+                                                                                'y': e.clientY - 80, // header height
+                                                                            }
+                                                                            :
+                                                                            {
+                                                                                'type': 'text',
+                                                                                'content': '',
+                                                                                'x': e.clientX - window.innerWidth / 2 - 10, // Row justify='center'
+                                                                                'y': e.clientY - 80, // header height
+                                                                            }
 
                                                         const newList = [
                                                             ...draggableComponentList,
