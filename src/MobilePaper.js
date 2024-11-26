@@ -136,7 +136,7 @@ function MobilePaper() {
                     const imgWidth = 210;
                     const imgHeight = (canvas.height * imgWidth) / canvas.width;
                     // NONE, FAST, MEDIUM, SLOW
-                    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, 'FAST');
+                    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
 
 
                     if (imagePageNumber !== imagePageNumberEnd) {
