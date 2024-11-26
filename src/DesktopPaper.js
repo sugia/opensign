@@ -96,7 +96,7 @@ function DesktopPaper() {
 
     const [isPrintingPage, setIsPrintingPage] = useState(false)
 
-    const [pdf, setPdf] = useState(new jsPDF('p', 'mm', 'a4'))
+    const [pdf, setPdf] = useState(new jsPDF('p', 'mm', 'a4', true))
     const [progressPercent, setProgressPercent] = useState(-1)
 
     const printRef = useRef()
@@ -127,7 +127,8 @@ function DesktopPaper() {
 
                     const imgWidth = 210;
                     const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                    // NONE, FAST, MEDIUM, SLOW
+                    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, 'FAST');
 
 
                     if (imagePageNumber !== imagePageNumberEnd) {
