@@ -159,7 +159,7 @@ function DesktopPaper() {
     const saveAsPDF = async () => {
         setLastImagePageNumber(imagePageNumber)
 
-        setPdf(new jsPDF('p', 'mm', 'a4'))
+        setPdf(new jsPDF('p', 'mm', 'a4', true))
 
         setProgressPercent(0)
         setImagePageNumber(imagePageNumberStart)
