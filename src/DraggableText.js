@@ -109,7 +109,7 @@ function DraggableText(props) {
                         style={{
                             'width': contentWidth,
                             'minWidth': '100px',
-                            'backgroundColor': isFocused ? 'white' : content === '' ? 'mistyRose' : 'rgba(0,0,0,0)',
+                            'backgroundColor': isFocused ? 'rgba(255, 255, 255, 0.5)' : content === '' ? 'mistyRose' : 'rgba(0,0,0,0)',
                             'color': 'blue',
                         }}
                         value={content}

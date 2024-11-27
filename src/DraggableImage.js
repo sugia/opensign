@@ -96,6 +96,16 @@ function DraggableImage(props) {
                     setHeight(ref.style.height)
                     updateWidthHeight(ref.style.width, ref.style.height)
                 }}
+                enableResizing={{
+                    top: false,
+                    right: false,
+                    bottom: false,
+                    left: false,
+                    topRight: false,
+                    bottomRight: true,
+                    bottomLeft: true,
+                    topLeft: true,
+                }}
             >
 
                 <Image preview={false} src={content}
