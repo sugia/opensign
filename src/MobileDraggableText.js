@@ -101,26 +101,39 @@ function MobileDraggableText(props) {
                     }}
                     style={{ 'display': 'flex', 'position': 'fixed', 'zIndex': isFocused ? 2 : 1 }}
                 >
-                    <Input
-                        ref={inputRef}
-                        variant={isFocused ? 'outlined' : 'borderless'}
-                        size='small'
-                        placeholder='text box'
-                        style={{
-                            'width': contentWidth,
-                            'minWidth': '100px',
-                            'backgroundColor': isFocused ? 'rgba(255, 255, 255, 0.5)' : content === '' ? 'mistyRose' : 'rgba(0,0,0,0)',
-                            'color': 'blue',
-                        }}
-                        value={content}
-                        onChange={(e) => {
-                            setContent(e.target.value)
-                            updateContent(e.target.value)
-                        }}
-                        onPressEnter={() => {
-                            setIsFocused(false)
-                        }}
-                    />
+                    {
+                        isFocused ?
+                            <Input
+                                ref={inputRef}
+                                variant='outlined'
+                                size='small'
+                                placeholder='text box'
+                                style={{
+                                    'width': contentWidth,
+                                    'minWidth': '100px',
+                                    'backgroundColor': isFocused ? 'rgba(255, 255, 255, 0.5)' : content === '' ? 'mistyRose' : 'rgba(0,0,0,0)',
+                                    'color': 'blue',
+                                }}
+                                value={content}
+                                onChange={(e) => {
+                                    setContent(e.target.value)
+                                    updateContent(e.target.value)
+                                }}
+                                onPressEnter={() => {
+                                    setIsFocused(false)
+                                }}
+                            />
+                            :
+                            content === '' ?
+                                <div style={{ 'width': '100px', 'backgroundColor': 'mistyRose' }}></div>
+                                :
+                                <div style={{
+                                    'color': 'blue',
+                                    'backgroundColor': 'rgba(0,0,0,0)',
+                                    'marginTop': '4px',
+                                    'marginLeft': '8px',
+                                }}>{content}</div>
+                    }
 
                     <Button
                         danger={isDeleteConfirmVisible ? true : false}
